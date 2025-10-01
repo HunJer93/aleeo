@@ -1,23 +1,22 @@
 import './App.css';
 import Users from './components/Users';
 import { useEffect, useState } from 'react';
-import apiClient from './utility/api';
+import { getUsers } from './utility/apiUtils';
 
 
 function App() {
   const [users, setUsers] = useState([]);
 
 useEffect(() => {
-const fetchData = async () => {
-  try {
-    const response = await apiClient.get('/users');
-    setUsers(response.data);
-  } catch (error) {
-      console.error('Error fetching data:', error);
-  }
-};
+  let mounted = true;
+  getUsers().then((response) => {
+    if (mounted) {
+      console.log(`users: ${JSON.stringify(response)}`);
+      setUsers(response);
+    }
+  });
 
-fetchData();
+  return () => (mounted = false);
 }, []);
 
   return (
