@@ -7,17 +7,17 @@ import { getUsers } from './utility/apiUtils';
 function App() {
   const [users, setUsers] = useState([]);
 
-useEffect(() => {
-  let mounted = true;
-  getUsers().then((response) => {
-    if (mounted) {
-      console.log(`users: ${JSON.stringify(response)}`);
-      setUsers(response);
-    }
-  });
+  // only make API request on inital page load.
+  useEffect(() => {
+    let mounted = true;
+    getUsers().then((response) => {
+      if (mounted) {
+        setUsers(response);
+      }
+    });
 
-  return () => (mounted = false);
-}, []);
+    return () => (mounted = false);
+  }, []);
 
   return (
     <div className="App">
