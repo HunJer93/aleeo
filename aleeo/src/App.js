@@ -22,7 +22,7 @@ fetchData();
 
   return (
     <div className="App">
-      <h1>{process.env.REACT_APP_API_URL}</h1>
+      <h1>{process.env.REACT_APP_MODE}</h1>
       <Users users={users}/>
     </div>
   );
