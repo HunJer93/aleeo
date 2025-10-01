@@ -1,33 +1,28 @@
 import './App.css';
-import axios from "axios";
 import Users from './components/Users';
 import { useEffect, useState } from 'react';
+import apiClient from './utility/api';
 
-// move to store 
-const API_URL = "http://localhost:3000/api/v1/users"
-
-function getAPIData() {
-  return axios.get(API_URL).then((response) => response.data)
-}
 
 function App() {
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    let mounted = true;
-    getAPIData().then((items) => {
-      if (mounted) {
-        setUsers(items);
-      }
-    });
+useEffect(() => {
+const fetchData = async () => {
+  try {
+    const response = await apiClient.get('/users');
+    setUsers(response.data);
+  } catch (error) {
+      console.error('Error fetching data:', error);
+  }
+};
 
-    return () => (mounted = false);
-
-  }, []);
+fetchData();
+}, []);
 
   return (
     <div className="App">
-      <h1>Hello</h1>
+      <h1>{process.env.REACT_APP_API_URL}</h1>
       <Users users={users}/>
     </div>
   );
