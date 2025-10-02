@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Provider } from "./components/ui/provider";
 import UserLogin from './components/UserLogin';
 import { getUsers } from './utility/apiUtils';
-import { Button } from '@chakra-ui/react';
 
 
 function App() {
@@ -24,9 +23,7 @@ function App() {
   return (
     <div className="App">
       <Provider>
-        <h1>{process.env.REACT_APP_MODE}</h1>
         <UserLogin users={users}/>
-        <Button>Click me</Button>
       </Provider>
     </div>
 
