@@ -1,5 +1,5 @@
 import './App.css';
-import Users from './components/Users';
+import UserLogin from './components/UserLogin';
 import { useEffect, useState } from 'react';
 import { getUsers } from './utility/apiUtils';
 
@@ -22,7 +22,7 @@ function App() {
   return (
     <div className="App">
       <h1>{process.env.REACT_APP_MODE}</h1>
-      <Users users={users}/>
+      <UserLogin users={users}/>
     </div>
   );
 }
