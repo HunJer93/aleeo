@@ -3,7 +3,7 @@ import React from 'react'
 function users(props) {
   return <div>
     <h1>Users from the API</h1>
-    {props.users.map((user) => {
+    {props.users?.map((user) => {
       return (
         <div key={user.id}>
           <h2>{user.username}</h2>
