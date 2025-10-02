@@ -1,10 +1,11 @@
-import { Button, Field, Input, Stack } from '@chakra-ui/react';
+import { Button, Field, Input, Link, Stack } from '@chakra-ui/react';
 import React, { useState } from 'react'
 
 function UserLogin(props) {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [newUser, setNewUser] = useState(false);
 
   // placeholder to handle sign in
   const handleSignin = (error) => {
@@ -14,7 +15,7 @@ function UserLogin(props) {
   };
 
   // form for signing in
-  const signinForm = () => 
+  const signinForm = () => <>
       <Stack gap="8" maxW="sm" css={{ "--field-label-width": "96px" }}>
         <Field.Root orientation={"horizontal"} required>
           <Field.Label>
@@ -45,12 +46,23 @@ function UserLogin(props) {
         <Button colorPalette={"blue"} variant="surface" onClick={handleSignin}>
           Sign in
         </Button>
+        <Link
+          variant="underline" href='#' onClick={(e) => setNewUser(!e.target.value)}
+        >
+          Create Account
+        </Link>
       </Stack>
+  </>
+
+  const newUserForm = () => <>
+  <h1>Create Account</h1>
+
+  </>
 
   return (
     <div>
         <h1>Marshall Flinkman</h1>
-        {signinForm()}
+        {newUser ? newUserForm() : signinForm()}
     </div>
   )
   
