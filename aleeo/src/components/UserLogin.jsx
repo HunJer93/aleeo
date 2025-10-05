@@ -1,4 +1,4 @@
-import { Button, Field, Input, Link, Stack } from '@chakra-ui/react';
+import { Button, Center, Field, Input, Link, Stack } from '@chakra-ui/react';
 import React, { useState } from 'react'
 
 function UserLogin(props) {
@@ -28,8 +28,10 @@ function UserLogin(props) {
   };
 
   // form for signing in
-  const signinForm = () => <>
-      <Stack gap="8" maxW="sm" css={{ "--field-label-width": "96px" }}>
+  const signinForm = () => 
+  <>
+    <Center css={{"padding-top" : "2rem" }}>
+      <Stack gap="8" maxW="sm" justifyContent={'center'} css={{ "--field-label-width": "96px" }}>
         <Field.Root orientation={"horizontal"} required>
           <Field.Label>
             Username
@@ -65,81 +67,84 @@ function UserLogin(props) {
           Create Account
         </Link>
       </Stack>
+    </Center>
   </>
 
   // form for new users
-  const newUserForm = () => <>
-    <Stack gap="8" maxW="sm" css={{ "--field-label-width": "96px" }}>
-      <h1>Create Account</h1>
-      <Field.Root orientation={"horizontal"} required>
-        <Field.Label>
-          First Name
-          <Field.RequiredIndicator />
-        </Field.Label>
-        <Input 
-          value={newUserInfo?.first_name}
-          placeholder='First name' 
-          flex="1"
-          onChange={(e) => setNewUserInfo({...newUserInfo, first_name: e.target.value})}  
+  const newUserForm = () => 
+  <>
+    <Center css={{"padding-top" : "2rem" }}>
+      <Stack gap="8" maxW="sm" css={{ "--field-label-width": "96px" }}>
+        <h1>Create Account</h1>
+        <Field.Root orientation={"horizontal"} required>
+          <Field.Label>
+            First Name
+            <Field.RequiredIndicator />
+          </Field.Label>
+          <Input 
+            value={newUserInfo?.first_name}
+            placeholder='First name' 
+            flex="1"
+            onChange={(e) => setNewUserInfo({...newUserInfo, first_name: e.target.value})}  
+            />
+        </Field.Root>
+
+        <Field.Root orientation={"horizontal"} required>
+          <Field.Label>
+            Last Name
+            <Field.RequiredIndicator />
+          </Field.Label>
+          <Input 
+            value={newUserInfo?.last_name}
+            placeholder='Last Name' 
+            flex="1"
+            onChange={(e) => setNewUserInfo({...newUserInfo, last_name: e.target.value})}   
+            />
+        </Field.Root>
+
+        <Field.Root orientation={"horizontal"} required>
+          <Field.Label>
+            Email
+            <Field.RequiredIndicator />
+          </Field.Label>
+          <Input 
+            value={newUserInfo?.username}
+            placeholder='Email' 
+            flex="1"
+            onChange={(e) => setNewUserInfo({...newUserInfo, username: e.target.value})}   
+            />
+        </Field.Root>
+
+        <Field.Root orientation={"horizontal"} required>
+          <Field.Label>
+            Password
+            <Field.RequiredIndicator />
+          </Field.Label>
+          <Input
+            value={newUserInfo?.password}
+            placeholder='Password' 
+            flex="1"
+            onChange={(e) => setNewUserInfo({...newUserInfo, password: e.target.value})}  
           />
-      </Field.Root>
+        </Field.Root>
 
-      <Field.Root orientation={"horizontal"} required>
-        <Field.Label>
-          Last Name
-          <Field.RequiredIndicator />
-        </Field.Label>
-        <Input 
-          value={newUserInfo?.last_name}
-          placeholder='Last Name' 
-          flex="1"
-          onChange={(e) => setNewUserInfo({...newUserInfo, last_name: e.target.value})}   
-          />
-      </Field.Root>
-
-      <Field.Root orientation={"horizontal"} required>
-        <Field.Label>
-          Email
-          <Field.RequiredIndicator />
-        </Field.Label>
-        <Input 
-          value={newUserInfo?.username}
-          placeholder='Email' 
-          flex="1"
-          onChange={(e) => setNewUserInfo({...newUserInfo, username: e.target.value})}   
-          />
-      </Field.Root>
-
-      <Field.Root orientation={"horizontal"} required>
-        <Field.Label>
-          Password
-          <Field.RequiredIndicator />
-        </Field.Label>
-        <Input
-          value={newUserInfo?.password}
-          placeholder='Password' 
-          flex="1"
-          onChange={(e) => setNewUserInfo({...newUserInfo, password: e.target.value})}  
-        />
-      </Field.Root>
-
-      <Field.Root orientation={"horizontal"} required>
-        <Field.Label>
-          Confirm Password
-          <Field.RequiredIndicator />
-        </Field.Label>
-        <Input 
-          value={newUserInfo?.confirm_password}
-          placeholder='Password' 
-          flex="1"
-          onChange={(e) => setNewUserInfo({...newUserInfo, confirm_password: e.target.value})}  
-          />
-      </Field.Root>
-
-      <Button colorPalette={"blue"} variant="surface" onClick={handleCreateUser}>
-        Create Account
-      </Button>
-    </Stack>
+        <Field.Root orientation={"horizontal"} required>
+          <Field.Label>
+            Confirm Password
+            <Field.RequiredIndicator />
+          </Field.Label>
+          <Input 
+            value={newUserInfo?.confirm_password}
+            placeholder='Password' 
+            flex="1"
+            onChange={(e) => setNewUserInfo({...newUserInfo, confirm_password: e.target.value})}  
+            />
+        </Field.Root>
+          <Button colorPalette={"blue"} variant="surface" onClick={handleCreateUser}>
+            Create Account
+          </Button>
+      </Stack>
+    </Center>
   </>
 
   return (
