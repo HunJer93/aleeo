@@ -1,12 +1,14 @@
 import { Button, Center, Field, Input, Link, Stack } from '@chakra-ui/react';
 import React, { useState } from 'react'
+import { userLogin } from '../utility/apiUtils';
 
 function UserLogin(props) {
 
   const [newUser, setNewUser] = useState(false);
   const [userSignIn, setUserSignIn] = useState({
     username: '',
-    password: ''
+    password: '',
+    remember_me: false
   })
   const [newUserInfo, setNewUserInfo] = useState({
     first_name: '',
@@ -20,6 +22,7 @@ function UserLogin(props) {
   const handleSignin = (error) => {
     error.preventDefault();
     console.log("Sign-in : ", JSON.stringify(userSignIn, 1, 1));
+    userLogin(userSignIn);
   };
 
   const handleCreateUser = (error) => {
