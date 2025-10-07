@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Provider } from "./components/ui/provider";
 import UserLogin from './components/UserLogin';
 import { getUsers } from './utility/apiUtils';
+import { ChakraProvider } from '@chakra-ui/react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
 function App() {
@@ -22,9 +24,16 @@ function App() {
 
   return (
     <div className="App">
-      <Provider>
-        <UserLogin users={users}/>
-      </Provider>
+      <ChakraProvider>
+        <Router>
+          <Provider>
+            <Routes>
+              <Route path="/" element={<UserLogin users={users}/>} />
+              {/* Add more routes here */}
+            </Routes>
+          </Provider>
+        </Router>
+      </ChakraProvider>
     </div>
 
   );
