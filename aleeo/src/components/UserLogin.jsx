@@ -1,6 +1,7 @@
 import { Button, Center, Field, Input, Link, Stack } from '@chakra-ui/react';
 import React, { useState } from 'react'
 import { userLogin } from '../utility/apiUtils';
+import ChatInterface from './ChatInterface';
 
 function UserLogin(props) {
 
@@ -18,17 +19,22 @@ function UserLogin(props) {
     confirm_password: ''
   });
 
-  // placeholder to handle sign in
-  const handleSignin = (error) => {
+  const [userData, setUserData] = useState(null);
+
+
+  const handleSignin = async (error) => {
     error.preventDefault();
-    console.log("Sign-in : ", JSON.stringify(userSignIn, 1, 1));
-    userLogin(userSignIn);
+    const data = await userLogin(userSignIn);
+    setUserData(data);
   };
 
   const handleCreateUser = (error) => {
     error.preventDefault();
-    console.log("Create User Info: ", JSON.stringify(newUserInfo, 1, 1));
   };
+
+  const loginOptions = () => {
+    return newUser ? newUserForm() : signinForm();
+  }
 
   // form for signing in
   const signinForm = () => 
@@ -153,7 +159,9 @@ function UserLogin(props) {
   return (
     <div>
         <h1>Marshall Flinkman</h1>
-        {newUser ? newUserForm() : signinForm()}
+        {/* placeholder for user sign-in. Routing handled after POC finished */}
+        {userData ? <ChatInterface userData={userData} /> : loginOptions()}
+        
     </div>
   )
   
