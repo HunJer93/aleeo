@@ -33,15 +33,37 @@ function ChatInterface(props) {
     };
 
     const messageClassifier = (message) => {
-        if (message.role === 'user') {
-            return <Box key={message.id} background={"blue"} justifyContent={"right"} fill={"bg.subtle"} paddingTop={"1rem"}>
-                <p><strong>{message.role}:</strong> {message.content} </p>
-            </Box>
-        } else {
-            return <Box key={message.id} background={"gray"} justifyContent={"left"} fill={"bg.subtle"}>
-                <p><strong>{message.role}:</strong> {message.content} </p>
-            </Box>
-        }
+    if (message.role === 'user') {
+      return (
+        <Box
+          key={message.id}
+          bg="blue.100"
+          borderRadius="lg"
+          alignSelf="flex-end"
+          maxW="70%"
+          mb={2}
+          px={4}
+          py={2}
+        >
+          <p><strong>{message.role}:</strong> {message.content} </p>
+        </Box>
+      );
+    } else {
+      return (
+        <Box
+          key={message.id}
+          bg="purple.100"
+          borderRadius="lg"
+          alignSelf="flex-start"
+          maxW="70%"
+          mb={2}
+          px={4}
+          py={2}
+        >
+          <p><strong>{message.role}:</strong> {message.content} </p>
+        </Box>
+      );
+    }
     };
 
     const messageBuilder = (messages) => {
