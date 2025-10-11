@@ -52,3 +52,6 @@ end
 gem "bcrypt", "~> 3.1"
 
 gem "pry", "~> 0.15.0"
+
+gem "fast_jsonapi", "~> 1.5"
+gem "active_model_serializers", "~> 0.10.0"
