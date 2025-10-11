@@ -9,23 +9,28 @@ function ChatInterface(props) {
     const chatBuilder = (conversations) => {
     return (
       <SimpleGrid
-        columns={{ base: 2, md: 4 }}
-        gap={{ base: "40px", md: "40px" }}
-        justifyItems="start"
-        justifyContent="end"
+        columns={{ base: 5, md: "1fr 4fr" }}
+        gap={{ base: "24px", md: "40px" }}
+        width="100vw"
+        height="100vh"
+        minH="100vh"
+        minW="100vw"
+        position="fixed"
+        top={0}
+        left={0}
       >
-        <GridItem colSpan={{ base: 1, md: 1 }}>
-          <Container>
-          <h2>Conversations</h2>
-          <VStack>
-          {conversations?.map((convo) => ( <Button variant="ghost">{convo.title}</Button>))}
-          </VStack>
+        <GridItem colSpan={1}>
+          <Container height="100%">
+            <h2>Conversations</h2>
+            <VStack>
+              {conversations?.map((convo) => (<Button variant="ghost">{convo.title}</Button>))}
+            </VStack>
           </Container>
         </GridItem>
-        <GridItem colSpan={{ base: 1, md: 2 }}>
-          <Container>
-          <h2>Chat Window</h2>
-          {messageBuilder(currentChat?.messages)}
+        <GridItem colSpan={4}>
+          <Container height="100%">
+            <h2>Chat Window</h2>
+            {messageBuilder(currentChat?.messages)}
           </Container>
         </GridItem>
       </SimpleGrid>
@@ -81,9 +86,6 @@ function ChatInterface(props) {
     
   return (
     <div>
-        <h2>Chat Interface</h2>
-        <p>Welcome, {userData?.first_name} {userData?.last_name}!</p>
-        <p>Your username is: {userData?.username}</p>
         {chatBuilder(userData?.conversations)}
     {console.log("User Data in Chat Interface: ", JSON.stringify(userData, 1, 1))}
     </div>
