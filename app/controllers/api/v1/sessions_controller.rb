@@ -28,6 +28,6 @@ class Api::V1::SessionsController < ApplicationController
     end
 
     def serialize_user(user)
-      UserSerializer.new(user, include: [ :conversations, :'conversations.messages' ]).serializable_hash
+      UserSerializer.new(user).serializable_hash[:data][:attributes]
     end
 end

@@ -1,8 +1,11 @@
 class ConversationSerializer < ActiveModel::Serializer
   include FastJsonapi::ObjectSerializer
+    set_key_transform :camel_lower
 
-  set_key_transform :camel_lower
+  has_many :messages
 
   attributes :id, :title
-  has_many :messages, serializer: MessageSerializer
+  attribute :messages do |object|
+    MessageSerializer.new(object.messages).serializable_hash[:data].map { |msg| msg[:attributes] }
+  end
 end
