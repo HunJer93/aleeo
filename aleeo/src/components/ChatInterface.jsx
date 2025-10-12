@@ -9,7 +9,7 @@ function ChatInterface(props) {
     const chatBuilder = (conversations) => {
     return (
       <SimpleGrid
-        columns={{ base: 5, md: "1fr 4fr" }}
+        columns={{ base: 6, md: "1fr 4fr" }}
         gap={{ base: "24px", md: "40px" }}
         width="100vw"
         height="100vh"
@@ -18,6 +18,8 @@ function ChatInterface(props) {
         position="fixed"
         top={0}
         left={0}
+        px="10vw"
+        py="10vh"
       >
         <GridItem colSpan={1}>
           <Container height="100%">
@@ -27,7 +29,7 @@ function ChatInterface(props) {
             </VStack>
           </Container>
         </GridItem>
-        <GridItem colSpan={4}>
+        <GridItem colSpan={5}>
           <Container height="100%">
             <h2>Chat Window</h2>
             {messageBuilder(currentChat?.messages)}
