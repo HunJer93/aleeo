@@ -43,7 +43,17 @@ function ChatInterface(props) {
         <Container height="100%">
         <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'}>Conversations</Heading>
         <VStack>
-          {conversations?.map((convo) => (<Button variant="ghost">{convo.title}</Button>))}
+          {conversations?.map((convo) => (
+            <Button 
+            variant="ghost"
+            onClick={() => setCurrentChat(convo)}
+            key={convo.id}
+            isFullWidth
+            textAlign="left"
+            >
+              {convo.title}
+            </Button>
+            ))}
         </VStack>
         </Container>
       </GridItem>
