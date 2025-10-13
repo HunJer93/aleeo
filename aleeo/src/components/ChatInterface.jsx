@@ -11,9 +11,15 @@ function ChatInterface(props) {
     // Handler for submitting a message
     const handleSendMessage = () => {
       if (!newMessage.trim()) return;
-      // placeholder for sending message to backend
+
 
       console.log("Sending message: ", newMessage);
+      currentChat?.messages.push({
+        role: 'user',
+        content: newMessage
+      });
+      setCurrentChat({...currentChat});
+      // placeholder for sending message to backend
       setNewMessage("");
     };
 
