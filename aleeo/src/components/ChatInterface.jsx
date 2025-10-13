@@ -1,4 +1,4 @@
-import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, ScrollArea, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, ScrollArea, Separator, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
 import React from 'react'
 import { FaPlusCircle } from "react-icons/fa";
 
@@ -47,15 +47,16 @@ function ChatInterface(props) {
       py="10vh"
       >
       <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md">
-        <Container height="100%">
-          <HStack justifyContent="space-between" alignItems="center">
-                  <Heading size="md" paddingTop={'1rem'} paddingBottom={'2rem'}>Conversations</Heading>
-        <IconButton aria-label="add-conversation" rounded="full" size={"2xs"} colorPalette={"purple"}>
-          <FaPlusCircle />   
-        </IconButton>
+        <Container height="100%" align="center">
+          <HStack  alignItems="center" paddingTop={'1rem'} paddingBottom={'1rem'}>
+            <Heading size="md" m={0}>Conversations</Heading>
+            <IconButton aria-label="add-conversation" rounded="full" size={"2xs"} colorPalette={"purple"} display="flex" alignItems="center" justifyContent="center">
+              <FaPlusCircle />
+            </IconButton>
+            
           </HStack>
-
-        <VStack>
+        <Separator size={'lg'} />
+        <VStack paddingTop={'1rem'}>
           {conversations?.map((convo) => (
             <Button 
             variant="ghost"
