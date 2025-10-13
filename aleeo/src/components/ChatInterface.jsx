@@ -68,7 +68,9 @@ function ChatInterface(props) {
               <FaPlusCircle />
             </IconButton>
           </HStack>
-          <Separator size={'lg'} />
+          <Box width="100%" display="flex" justifyContent="center">
+            <Separator size={'lg'} width="80%" mx="auto" />
+          </Box>
           <VStack paddingTop={'1rem'} width="100%">
             {conversations?.map((convo) => (
               <Button 
