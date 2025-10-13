@@ -1,4 +1,4 @@
-import { Box, Button, Container, For, GridItem, SimpleGrid, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, For, GridItem, ScrollArea, SimpleGrid, VStack } from '@chakra-ui/react';
 import React from 'react'
 
 function ChatInterface(props) {
@@ -21,7 +21,7 @@ function ChatInterface(props) {
         px="10vw"
         py="10vh"
       >
-        <GridItem colSpan={1}>
+        <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md">
           <Container height="100%">
             <h2>Conversations</h2>
             <VStack>
@@ -29,7 +29,7 @@ function ChatInterface(props) {
             </VStack>
           </Container>
         </GridItem>
-        <GridItem colSpan={5}>
+        <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md">
           <Container height="100%">
             <h2>Chat Window</h2>
             {messageBuilder(currentChat?.messages)}
@@ -75,13 +75,23 @@ function ChatInterface(props) {
 
     const messageBuilder = (messages) => {
         return (
-            <VStack>
-            <For each={messages}>
-            { (msg) => (
-                messageClassifier(msg)
-            )}
-            </For>
-            </VStack>
+          <ScrollArea.Root>
+            <ScrollArea.Viewport>
+              <ScrollArea.Content>
+              <VStack>
+                    <For each={messages}>
+                    { (msg) => (
+                        messageClassifier(msg)
+                    )}
+                    </For>
+                    </VStack>
+              </ScrollArea.Content>
+            </ScrollArea.Viewport>
+            <ScrollArea.Scrollbar>
+              <ScrollArea.Thumb />
+            </ScrollArea.Scrollbar>
+            <ScrollArea.Corner />
+          </ScrollArea.Root>   
         )
     };
 
