@@ -50,7 +50,7 @@ function ChatInterface(props) {
         <Container height="100%">
           <HStack justifyContent="space-between" alignItems="center">
                   <Heading size="md" paddingTop={'1rem'} paddingBottom={'2rem'}>Conversations</Heading>
-        <IconButton aria-label="Call support" rounded="full">
+        <IconButton aria-label="add-conversation" rounded="full" size={"2xs"} colorPalette={"purple"}>
           <FaPlusCircle />   
         </IconButton>
           </HStack>
