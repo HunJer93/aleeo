@@ -9,6 +9,19 @@ function ChatInterface(props) {
     const [newMessage, setNewMessage] = React.useState("");
 
     const chatBuilder = (conversations) => {
+    // Handler for adding a new conversation
+    const handleAddConversation = () => {
+      // Generate a new conversation object
+      const newConvo = {
+        title: `New Conversation ${conversations.length + 1}`,
+        messages: []
+      };
+      // Add to userData.conversations
+      if (userData && userData.conversations) {
+        userData.conversations.push(newConvo);
+        setCurrentChat(newConvo);
+      }
+    };
     // Handler for submitting a message
     const handleSendMessage = () => {
       if (!newMessage.trim()) return;
@@ -64,7 +77,17 @@ function ChatInterface(props) {
             paddingBottom={'1rem'}
           >
             <Heading size="md" m={0} display="flex" alignItems="center" whiteSpace="nowrap">Conversations</Heading>
-            <IconButton aria-label="add-conversation" rounded="full" size={"2xs"} colorPalette={"purple"} display="flex" alignItems="center" justifyContent="center" mt={1}>
+            <IconButton
+              aria-label="add-conversation"
+              rounded="full"
+              size={"2xs"}
+              colorPalette={"purple"}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              mt={1}
+              onClick={handleAddConversation}
+            >
               <FaPlusCircle />
             </IconButton>
           </HStack>
