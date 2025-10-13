@@ -32,7 +32,19 @@ function ChatInterface(props) {
         <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md">
           <Container height="100%">
             <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'}>Current Chat ({currentChat?.title})</Heading>
-            {messageBuilder(currentChat?.messages)}
+            {/* scroll area for messages */}
+            <ScrollArea.Root height={"80%"}>
+            <ScrollArea.Viewport>
+              <ScrollArea.Content>
+                {messageBuilder(currentChat?.messages)}
+              </ScrollArea.Content>
+            </ScrollArea.Viewport>
+            <ScrollArea.Scrollbar>
+              <ScrollArea.Thumb />
+            </ScrollArea.Scrollbar>
+            <ScrollArea.Corner />
+          </ScrollArea.Root>   
+            
           </Container>
         </GridItem>
       </SimpleGrid>
@@ -75,9 +87,6 @@ function ChatInterface(props) {
 
     const messageBuilder = (messages) => {
         return (
-          <ScrollArea.Root>
-            <ScrollArea.Viewport>
-              <ScrollArea.Content>
               <VStack>
                     <For each={messages}>
                     { (msg) => (
@@ -85,13 +94,7 @@ function ChatInterface(props) {
                     )}
                     </For>
                     </VStack>
-              </ScrollArea.Content>
-            </ScrollArea.Viewport>
-            <ScrollArea.Scrollbar>
-              <ScrollArea.Thumb />
-            </ScrollArea.Scrollbar>
-            <ScrollArea.Corner />
-          </ScrollArea.Root>   
+
         )
     };
 
