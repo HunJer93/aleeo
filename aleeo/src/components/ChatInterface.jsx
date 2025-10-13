@@ -1,5 +1,6 @@
-import { Box, Button, Container, For, GridItem, Heading, HStack, ScrollArea, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, ScrollArea, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
 import React from 'react'
+import { FaPlusCircle } from "react-icons/fa";
 
 function ChatInterface(props) {
     const { userData } = props;
@@ -47,7 +48,13 @@ function ChatInterface(props) {
       >
       <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md">
         <Container height="100%">
-        <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'}>Conversations</Heading>
+          <HStack justifyContent="space-between" alignItems="center">
+                  <Heading size="md" paddingTop={'1rem'} paddingBottom={'2rem'}>Conversations</Heading>
+        <IconButton aria-label="Call support" rounded="full">
+          <FaPlusCircle />   
+        </IconButton>
+          </HStack>
+
         <VStack>
           {conversations?.map((convo) => (
             <Button 
