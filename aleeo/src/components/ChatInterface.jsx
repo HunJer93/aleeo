@@ -1,4 +1,4 @@
-import { Box, Button, Container, For, GridItem, ScrollArea, SimpleGrid, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, For, GridItem, Heading, ScrollArea, SimpleGrid, VStack } from '@chakra-ui/react';
 import React from 'react'
 
 function ChatInterface(props) {
@@ -23,7 +23,7 @@ function ChatInterface(props) {
       >
         <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md">
           <Container height="100%">
-            <h2>Conversations</h2>
+            <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'}>Conversations</Heading>
             <VStack>
               {conversations?.map((convo) => (<Button variant="ghost">{convo.title}</Button>))}
             </VStack>
@@ -31,7 +31,7 @@ function ChatInterface(props) {
         </GridItem>
         <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md">
           <Container height="100%">
-            <h2>Chat Window</h2>
+            <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'}>Current Chat ({currentChat?.title})</Heading>
             {messageBuilder(currentChat?.messages)}
           </Container>
         </GridItem>
