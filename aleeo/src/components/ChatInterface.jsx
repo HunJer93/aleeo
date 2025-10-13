@@ -47,28 +47,41 @@ function ChatInterface(props) {
       py="10vh"
       >
       <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md">
-        <Container height="100%" align="center">
-          <HStack  alignItems="center" paddingTop={'1rem'} paddingBottom={'1rem'}>
-            <Heading size="md" m={0}>Conversations</Heading>
+        <Container
+          height="100%"
+          minHeight="3.5rem"
+          display="flex"
+          flexDirection="column"
+          justifyContent="flex-start"
+          alignItems="stretch"
+          p={0}
+        >
+          <HStack
+            alignItems="center"
+            justifyContent="center"
+            width="100%"
+            paddingTop={'1rem'}
+            paddingBottom={'1rem'}
+          >
+            <Heading size="md" m={0} display="flex" alignItems="center" whiteSpace="nowrap">Conversations</Heading>
             <IconButton aria-label="add-conversation" rounded="full" size={"2xs"} colorPalette={"purple"} display="flex" alignItems="center" justifyContent="center">
               <FaPlusCircle />
             </IconButton>
-            
           </HStack>
-        <Separator size={'lg'} />
-        <VStack paddingTop={'1rem'}>
-          {conversations?.map((convo) => (
-            <Button 
-            variant="ghost"
-            onClick={() => setCurrentChat(convo)}
-            key={convo.id}
-            isFullWidth
-            textAlign="left"
-            >
-              {convo.title}
-            </Button>
+          <Separator size={'lg'} />
+          <VStack paddingTop={'1rem'} width="100%">
+            {conversations?.map((convo) => (
+              <Button 
+                variant="ghost"
+                onClick={() => setCurrentChat(convo)}
+                key={convo.id}
+                isFullWidth
+                textAlign="left"
+              >
+                {convo.title}
+              </Button>
             ))}
-        </VStack>
+          </VStack>
         </Container>
       </GridItem>
       <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md">
