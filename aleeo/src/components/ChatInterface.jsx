@@ -64,7 +64,7 @@ function ChatInterface(props) {
             paddingBottom={'1rem'}
           >
             <Heading size="md" m={0} display="flex" alignItems="center" whiteSpace="nowrap">Conversations</Heading>
-            <IconButton aria-label="add-conversation" rounded="full" size={"2xs"} colorPalette={"purple"} display="flex" alignItems="center" justifyContent="center">
+            <IconButton aria-label="add-conversation" rounded="full" size={"2xs"} colorPalette={"purple"} display="flex" alignItems="center" justifyContent="center" mt={1}>
               <FaPlusCircle />
             </IconButton>
           </HStack>
