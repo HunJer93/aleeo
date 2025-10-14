@@ -1,7 +1,8 @@
-import { Button, Center, Field, Heading, Input, Link, Stack } from '@chakra-ui/react';
+import { Button, Center, Field, Input, Link, Stack } from '@chakra-ui/react';
 import React, { useState } from 'react'
 import { userLogin } from '../utility/apiUtils';
 import ChatInterface from './ChatInterface';
+import logo  from '../assets/aleeo_logo.png';
 
 function UserLogin(props) {
 
@@ -158,9 +159,10 @@ function UserLogin(props) {
 
   return (
     <div>
-        <Heading as="h1" size="2xl" textAlign={'center'} marginTop={'2rem'}>
-          Aleeo
-        </Heading>
+    <Center>
+      <img src={logo} alt="Aleeo Logo" width="100" height="100"/>
+    </Center>
+        
         {/* placeholder for user sign-in. Routing handled after POC finished */}
         {userData ? <ChatInterface userData={userData} /> : loginOptions()}
         
