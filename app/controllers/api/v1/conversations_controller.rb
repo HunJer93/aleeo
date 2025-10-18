@@ -15,13 +15,12 @@ class Api::V1::ConversationsController < ApplicationController
 
   # POST /conversations
   def create
-    binding.pry
     @conversation = Conversation.new(conversation_params)
 
     if @conversation.save
-      render json: @conversation, status: :created # location: @conversation (add this back in when routing is set up)
+      render json: ConversationSerializer.new(@conversation).serializable_hash[:data][:attributes], status: :created
     else
-      render json: @conversation.errors, status: :unprocessable_content
+      render json: @conversation.errors, status: :unprocessable_entity
     end
   end
 
@@ -30,7 +29,7 @@ class Api::V1::ConversationsController < ApplicationController
     if @conversation.update(conversation_params)
       render json: @conversation
     else
-      render json: @conversation.errors, status: :unprocessable_content
+      render json: @conversation.errors, status: :unprocessable_entity
     end
   end
 
@@ -42,11 +41,11 @@ class Api::V1::ConversationsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_conversation
-      @conversation = Conversation.find(params.expect(:id))
+      @conversation = Conversation.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def conversation_params
-      params.expect(conversation: [ :title, :user_id ])
+      params.require(:conversation).permit(:title, :user_id)
     end
 end

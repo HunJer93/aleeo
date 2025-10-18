@@ -2,9 +2,11 @@ import apiClient from "./api"
 
 export const userLogin = async (params) => {
   try {
-    const response = await apiClient.post('/login', params)
+    const response = await apiClient.post('/login', params, {
+      withCredentials: true, // Ensures cookies are sent/received (if not set globally)
+      headers: { 'Content-Type': 'application/json' }
+    });
     return response.data;
-
   } catch (error) {
     alert("Login failed!");
     console.error('Login failed:', error);
@@ -31,4 +33,4 @@ export const sendMessage = async (params) => {
     alert("Sending message failed!");
     console.error('Sending message failed:', error);
   }
-}
+};

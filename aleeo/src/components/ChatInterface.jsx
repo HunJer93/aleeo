@@ -11,20 +11,19 @@ function ChatInterface(props) {
 
     const chatBuilder = (conversations) => {
     // Handler for adding a new conversation
-    const handleAddConversation = () => {
+    const handleAddConversation = async () => {
       // Generate a new conversation object
-      const newConvo = {
-        title: `New Conversation ${conversations.length + 1}`,
-        messages: []
-      };
+      const newCovoTitle =  `New Conversation ${conversations.length + 1}`;
       // Add to userData.conversations
       if (userData && userData.conversations) {
-        userData.conversations.push(newConvo);
-        setCurrentChat(newConvo);
-      }
-
       // post request to create new conversation
-      createConversation({ user_id: userData.id, title: newConvo.title });
+        const newConvo = await createConversation({ user_id: userData.id, title: newCovoTitle });
+        if (newConvo) {
+          userData.conversations.push(newConvo);
+          setCurrentChat(newConvo);
+        }
+        
+      }
     };
 
 
@@ -213,7 +212,7 @@ function ChatInterface(props) {
   return (
     <div>
         {chatBuilder(userData?.conversations)}
-    {console.log("User Data in Chat Interface: ", JSON.stringify(userData, 1, 1))}
+    {/* {console.log("User Data in Chat Interface: ", JSON.stringify(userData, 1, 1))} */}
     </div>
     
   )
