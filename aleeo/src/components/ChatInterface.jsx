@@ -1,7 +1,7 @@
 import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, ScrollArea, Separator, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
 import React from 'react'
 import { FaPlusCircle } from "react-icons/fa";
-import { createConversation } from '../utility/apiUtils';
+import { createConversation, createMessage } from '../utility/apiUtils';
 
 function ChatInterface(props) {
     const { userData } = props;
@@ -28,18 +28,16 @@ function ChatInterface(props) {
 
 
     // Handler for submitting a message
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
       if (!newMessage.trim()) return;
+      // send message via API
+      const responseMessage = await createMessage({ role: 'user', content: newMessage, conversation_id: currentChat.id });
 
-
-      console.log("Sending message: ", newMessage);
-      currentChat?.messages.push({
-        role: 'user',
-        content: newMessage
-      });
-      setCurrentChat({...currentChat});
-      // placeholder for sending message to backend
-      setNewMessage("");
+      // load response into chat
+      if (responseMessage) {
+        currentChat?.messages.push(responseMessage);
+        setCurrentChat({...currentChat});
+      }
     };
 
     // Handler for key down in textarea

@@ -18,9 +18,9 @@ class Api::V1::MessagesController < ApplicationController
     @message = Message.new(message_params)
 
     if @message.save
-      render json: @message, status: :created, location: @message
+      render json: MessageSerializer.new(@message).serializable_hash[:data][:attributes], status: :created
     else
-      render json: @message.errors, status: :unprocessable_content
+      render json: @message.errors, status: :unprocessable_entity
     end
   end
 
@@ -29,7 +29,7 @@ class Api::V1::MessagesController < ApplicationController
     if @message.update(message_params)
       render json: @message
     else
-      render json: @message.errors, status: :unprocessable_content
+      render json: @message.errors, status: :unprocessable_entity
     end
   end
 

@@ -24,7 +24,7 @@ export const createConversation = async (params) => {
   }
 };
 
-export const sendMessage = async (params) => {
+export const createMessage = async (params) => {
   try {
     const response = await apiClient.post('/messages', params)
     return response.data;
