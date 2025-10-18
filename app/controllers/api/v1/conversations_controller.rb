@@ -1,4 +1,4 @@
-class ConversationsController < ApplicationController
+class Api::V1::ConversationsController < ApplicationController
   before_action :set_conversation, only: %i[ show update destroy ]
 
   # GET /conversations
@@ -15,10 +15,11 @@ class ConversationsController < ApplicationController
 
   # POST /conversations
   def create
+    binding.pry
     @conversation = Conversation.new(conversation_params)
 
     if @conversation.save
-      render json: @conversation, status: :created, location: @conversation
+      render json: @conversation, status: :created # location: @conversation (add this back in when routing is set up)
     else
       render json: @conversation.errors, status: :unprocessable_content
     end

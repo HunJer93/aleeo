@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
-  resources :messages
-  resources :conversations
   namespace :api do
     namespace :v1 do
       resources :users, only: [ :create ]
       post "/login", to: "sessions#create"
+      resources :messages
+      resources :conversations
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

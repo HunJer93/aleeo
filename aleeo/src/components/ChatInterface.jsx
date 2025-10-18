@@ -1,6 +1,7 @@
 import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, ScrollArea, Separator, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
 import React from 'react'
 import { FaPlusCircle } from "react-icons/fa";
+import { createConversation } from '../utility/apiUtils';
 
 function ChatInterface(props) {
     const { userData } = props;
@@ -21,7 +22,12 @@ function ChatInterface(props) {
         userData.conversations.push(newConvo);
         setCurrentChat(newConvo);
       }
+
+      // post request to create new conversation
+      createConversation({ user_id: userData.id, title: newConvo.title });
     };
+
+
     // Handler for submitting a message
     const handleSendMessage = () => {
       if (!newMessage.trim()) return;

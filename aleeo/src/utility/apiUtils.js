@@ -10,3 +10,25 @@ export const userLogin = async (params) => {
     console.error('Login failed:', error);
   }
 };
+
+export const createConversation = async (params) => {
+  try {
+    const response = await apiClient.post('/conversations', params)
+    return response.data;
+
+  } catch (error) {
+    alert("Creating conversation failed!");
+    console.error('Creating conversation failed:', error);
+  }
+};
+
+export const sendMessage = async (params) => {
+  try {
+    const response = await apiClient.post('/messages', params)
+    return response.data;
+
+  } catch (error) {
+    alert("Sending message failed!");
+    console.error('Sending message failed:', error);
+  }
+}
