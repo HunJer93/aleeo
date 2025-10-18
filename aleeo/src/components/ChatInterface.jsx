@@ -1,6 +1,7 @@
-import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, ScrollArea, Separator, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, Popover, ScrollArea, Separator, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
 import React from 'react'
 import { FaPlusCircle } from "react-icons/fa";
+import { HiDotsHorizontal } from "react-icons/hi";
 import { createConversation, createMessage } from '../utility/apiUtils';
 
 function ChatInterface(props) {
@@ -26,6 +27,9 @@ function ChatInterface(props) {
         }
       };
 
+      const openConvoMenu = (conversation) => {
+        // Open the conversation options menu
+      };
 
       // Handler for submitting a message
       const handleSendMessage = async () => {
@@ -119,15 +123,20 @@ function ChatInterface(props) {
               >
               <ScrollArea.Content>
                 {conversations?.map((convo) => (
-                <Button 
-                  variant="ghost"
-                  onClick={() => setCurrentChat(convo)}
-                  key={convo.id}
-                  isFullWidth
-                  textAlign="left"
-                >
-                  {convo.title}
-                </Button>
+                  <Box key={convo.id} width="100%"> 
+                    <Button 
+                      variant="ghost"
+                      onClick={() => setCurrentChat(convo)}
+                      key={convo.id}
+                      isFullWidth
+                      textAlign="left"
+                    >
+                      {convo.title}
+                    </Button>
+                    <IconButton aria-label="conversation-options" variant="ghost" size="xs" onClick={() =>openConvoMenu(convo)}>
+                      <HiDotsHorizontal />
+                  </IconButton>
+                  </Box>
               ))}
               </ScrollArea.Content>
               </ScrollArea.Viewport>
