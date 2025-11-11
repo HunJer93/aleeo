@@ -124,12 +124,10 @@ function ChatInterface(props) {
         px="10vw"
         py="10vh"
         >
-        <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md" className="conversations-title-column">
+        <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md" className="conversations-title-column" style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           <Container
-            height="100%"
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}
             minHeight="3.5rem"
-            display="flex"
-            flexDirection="column"
             justifyContent="flex-start"
             alignItems="stretch"
             p={0}
@@ -141,7 +139,8 @@ function ChatInterface(props) {
               width="100%"
               paddingTop={'1rem'}
               paddingBottom={'1rem'}
-              flexWrap="wrap" // <-- allow wrapping
+              flexWrap="wrap"
+              style={{ flexShrink: 0 }}
             >
               <Heading
                 size="md"
@@ -167,10 +166,10 @@ function ChatInterface(props) {
                 <FaPlusCircle />
               </IconButton>
             </HStack>
-            <Box width="100%" display="flex" justifyContent="center">
+            <Box width="100%" display="flex" justifyContent="center" style={{ flexShrink: 0 }}>
               <Separator size={'lg'} width="80%" mx="auto" />
             </Box>
-            <VStack paddingTop={'1rem'} width="100%" className='current-chat-window'>
+            <VStack paddingTop={'1rem'} width="100%" className='current-chat-window' style={{ flex: 1, minHeight: 0 }}>
               {/* scroll area for chats */}
               <ScrollArea.Root height={"55rem"}>
                 <ScrollArea.Viewport
@@ -234,11 +233,11 @@ function ChatInterface(props) {
             </VStack>
           </Container>
         </GridItem>
-        <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md" className="current-chat-window">
-          <Container height="100%">
-            <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'}>Current Chat ({currentChat?.title})</Heading>
+        <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md" className="current-chat-window" style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+          <Container style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+            <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'} style={{ flexShrink: 0 }}>Current Chat ({currentChat?.title})</Heading>
             {/* scroll area for messages */}
-            <ScrollArea.Root height={"55rem"}>
+            <ScrollArea.Root style={{ flex: 1, minHeight: 0 }}>
               <ScrollArea.Viewport
                 css={{
                   "--scroll-shadow-size": "4rem",
@@ -263,7 +262,7 @@ function ChatInterface(props) {
               </ScrollArea.Scrollbar>
               <ScrollArea.Corner />
             </ScrollArea.Root>
-            <HStack>
+            <HStack style={{ flexShrink: 0 }}>
             <Textarea
               variant="outline"
               placeholder="Write a message..."
