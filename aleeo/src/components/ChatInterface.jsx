@@ -211,7 +211,21 @@ function ChatInterface(props) {
                                 <HiDotsHorizontal />
                               </IconButton>
                             </Popover.Trigger>
-                            <Popover.Content>
+                            <Popover.Content
+                              style={{
+                                position: "absolute",
+                                left: "50%",
+                                top: "40px",
+                                transform: "translateX(-50%)",
+                                zIndex: 9999,
+                                minWidth: "120px",
+                                boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+                                background: "white",
+                                borderRadius: "8px",
+                                border: "1px solid #e2e8f0",
+                                padding: "8px 0"
+                              }}
+                            >
                               <VStack spacing={1}>
                                 <Button variant="link" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
                                 <Button variant="link" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
