@@ -134,14 +134,25 @@ function ChatInterface(props) {
             alignItems="stretch"
             p={0}
           >
+          {/* conversations side bar */}
             <HStack
               alignItems="center"
               justifyContent="center"
               width="100%"
               paddingTop={'1rem'}
               paddingBottom={'1rem'}
+              flexWrap="wrap" // <-- allow wrapping
             >
-              <Heading size="md" m={0} display="flex" alignItems="center" whiteSpace="nowrap">Conversations</Heading>
+              <Heading
+                size="md"
+                m={0}
+                display="flex"
+                alignItems="center"
+                whiteSpace="normal" // <-- allow wrapping
+                wordBreak="break-word" // <-- break long words
+              >
+                Conversations
+              </Heading>
               <IconButton
                 aria-label="add-conversation"
                 rounded="full"
@@ -179,13 +190,15 @@ function ChatInterface(props) {
               >
               <ScrollArea.Content>
                 {conversations?.map((convo) => (
-                  <Box key={convo.id} width="100%"> 
-                    <Button 
+                  <Box key={convo.id} width="100%">
+                    <Button
                       variant="ghost"
                       onClick={() => setCurrentChat(convo)}
                       key={convo.id}
                       isFullWidth
                       textAlign="left"
+                      whiteSpace="normal" // <-- allow wrapping
+                      wordBreak="break-word" // <-- break long words
                     >
                       {convo.title}
                     </Button>
