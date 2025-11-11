@@ -158,10 +158,12 @@ function UserLogin(props) {
   </>
 
   return (
-    <div>
-    <Center>
-      <img src={logo} alt="Aleeo Logo" width="100" height="100"/>
-    </Center>
+    <div style={{ width: '100vw', height: '100vh', overflow: userData ? 'hidden' : 'auto' }}>
+      {!userData && (
+        <Center>
+          <img src={logo} alt="Aleeo Logo" width="100" height="100"/>
+        </Center>
+      )}
         
         {/* placeholder for user sign-in. Routing handled after POC finished */}
         {userData ? <ChatInterface userData={userData} /> : loginOptions()}
