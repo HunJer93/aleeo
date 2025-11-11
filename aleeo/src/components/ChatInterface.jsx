@@ -190,35 +190,39 @@ function ChatInterface(props) {
               >
               <ScrollArea.Content>
                 {conversations?.map((convo) => (
-                  <Box key={convo.id} width="100%">
-                    <Button
-                      variant="ghost"
-                      onClick={() => setCurrentChat(convo)}
-                      key={convo.id}
-                      isFullWidth
-                      textAlign="left"
-                      whiteSpace="normal" // <-- allow wrapping
-                      wordBreak="break-word" // <-- break long words
-                    >
-                      {convo.title}
-                    </Button>
-                    {/* 3 dot button and popover render logic */}
-                    <Popover.Root>
-                      <Popover.Trigger>
-                        <IconButton aria-label="conversation-options" variant="ghost" size="xs">
-                          <HiDotsHorizontal />
-                        </IconButton>
-                      </Popover.Trigger>
-                      <Popover.Content>
-                        <VStack spacing={1}>
-                          <Button variant="link" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
-                          <Button variant="link" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
-                        </VStack>
-                      </Popover.Content>
-                    </Popover.Root>
-
+                  <Box key={convo.id} width="100%" mb={5} py={3} px={1}>
+                    <HStack width="100%" alignItems="center" justifyContent="space-between">
+                      <Box flex="1 1 auto" minWidth={0}>
+                        <Button
+                          variant="ghost"
+                          onClick={() => setCurrentChat(convo)}
+                          key={convo.id}
+                          textAlign="left"
+                          whiteSpace="normal"
+                          wordBreak="break-word"
+                          width="100%"
+                        >
+                          {convo.title}
+                        </Button>
+                      </Box>
+                      <Box flexShrink={0}>
+                        <Popover.Root>
+                          <Popover.Trigger>
+                            <IconButton aria-label="conversation-options" variant="ghost" size="xs">
+                              <HiDotsHorizontal />
+                            </IconButton>
+                          </Popover.Trigger>
+                          <Popover.Content>
+                            <VStack spacing={1}>
+                              <Button variant="link" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
+                              <Button variant="link" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
+                            </VStack>
+                          </Popover.Content>
+                        </Popover.Root>
+                      </Box>
+                    </HStack>
                   </Box>
-              ))}
+                ))}
               </ScrollArea.Content>
               </ScrollArea.Viewport>
               <ScrollArea.Scrollbar>
