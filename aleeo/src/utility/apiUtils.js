@@ -34,3 +34,23 @@ export const createMessage = async (params) => {
     console.error('Sending message failed:', error);
   }
 };
+
+export const renameConversation = async (conversationId, newTitle) => {
+  try {
+    const response = await apiClient.put(`/conversations/${conversationId}`, { title: newTitle });
+    return response.data;
+  } catch (error) {
+    alert("Renaming conversation failed!");
+    console.error('Renaming conversation failed:', error);
+  }
+};
+
+export const deleteConversation = async (conversationId) => {
+  try {
+    const response = await apiClient.delete(`/conversations/${conversationId}`);
+    return response.data;
+  } catch (error) {
+    alert("Deleting conversation failed!");
+    console.error('Deleting conversation failed:', error);
+  }
+};

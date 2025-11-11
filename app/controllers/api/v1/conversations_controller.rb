@@ -27,7 +27,7 @@ class Api::V1::ConversationsController < ApplicationController
   # PATCH/PUT /conversations/1
   def update
     if @conversation.update(conversation_params)
-      render json: @conversation
+      render json: ConversationSerializer.new(@conversation).serializable_hash[:data][:attributes], status: :ok
     else
       render json: @conversation.errors, status: :unprocessable_entity
     end
@@ -36,6 +36,7 @@ class Api::V1::ConversationsController < ApplicationController
   # DELETE /conversations/1
   def destroy
     @conversation.destroy!
+    head :no_content
   end
 
   private

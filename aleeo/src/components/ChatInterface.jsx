@@ -2,7 +2,33 @@ import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, Pop
 import React from 'react'
 import { FaPlusCircle } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { createConversation, createMessage } from '../utility/apiUtils';
+import { createConversation, createMessage, deleteConversation, renameConversation } from '../utility/apiUtils';
+
+// ChatInterface component that accepts userData as a prop
+
+// user data structure:
+// userData = {
+//   id: number,
+//   username: string,
+//   firstName: string,
+//   lastName: string,
+//   conversations: [
+//     {
+//       id: number,
+//       title: string,
+//       messages: [
+//         {
+//           id: number,
+//           role: 'user' | 'assistant',
+//           content: string,
+//           conversationId: number
+//         },
+//         ...
+//       ]
+//     },
+//     ...
+//   ]
+// }s
 
 function ChatInterface(props) {
     const { userData } = props;
@@ -27,10 +53,6 @@ function ChatInterface(props) {
         }
       };
 
-      const openConvoMenu = (conversation) => {
-        // Open the conversation options menu
-      };
-
       // Handler for submitting a message
       const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
@@ -51,6 +73,40 @@ function ChatInterface(props) {
         if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleSendMessage();
+        }
+      };
+
+      const handleEditConversation = async (conversationId) => {
+        const response = await renameConversation(conversationId, "Renamed Conversation Placeholder Title");
+
+        console.log("Rename response: ", response);
+        // update in userData.conversations
+        const convo = userData.conversations.find((convo) => convo.id === conversationId);
+        if (convo) {
+          // update title from response
+          convo.title = response?.title;
+          // if renamed convo is currentChat, update currentChat
+          if (currentChat.id === conversationId) {
+            setCurrentChat({...currentChat, title: convo.title});
+          } else {
+            setCurrentChat({...currentChat});
+          }
+        }
+
+      };
+
+      const handleDeleteConversation = async (conversationId) => {
+        await deleteConversation(conversationId);
+        // remove from userData.conversations
+        const index = userData.conversations.findIndex((convo) => convo.id === conversationId);
+        if (index !== -1) {
+          userData.conversations.splice(index, 1);
+          // if deleted convo is currentChat, set currentChat to first convo or null
+          if (currentChat.id === conversationId) {
+            setCurrentChat(userData.conversations.length > 0 ? userData.conversations[0] : null);
+          } else {
+            setCurrentChat({...currentChat});
+          }
         }
       };
 
@@ -133,9 +189,21 @@ function ChatInterface(props) {
                     >
                       {convo.title}
                     </Button>
-                    <IconButton aria-label="conversation-options" variant="ghost" size="xs" onClick={() =>openConvoMenu(convo)}>
-                      <HiDotsHorizontal />
-                  </IconButton>
+                    {/* 3 dot button and popover render logic */}
+                    <Popover.Root>
+                      <Popover.Trigger>
+                        <IconButton aria-label="conversation-options" variant="ghost" size="xs">
+                          <HiDotsHorizontal />
+                        </IconButton>
+                      </Popover.Trigger>
+                      <Popover.Content>
+                        <VStack spacing={1}>
+                          <Button variant="link" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
+                          <Button variant="link" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
+                        </VStack>
+                      </Popover.Content>
+                    </Popover.Root>
+
                   </Box>
               ))}
               </ScrollArea.Content>
@@ -247,7 +315,7 @@ function ChatInterface(props) {
   return (
     <div>
         {chatBuilder(userData?.conversations)}
-    {/* {console.log("User Data in Chat Interface: ", JSON.stringify(userData, 1, 1))} */}
+    {console.log("User Data in Chat Interface: ", JSON.stringify(userData, 1, 1))}
     </div>
     
   )
