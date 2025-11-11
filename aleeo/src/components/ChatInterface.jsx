@@ -234,7 +234,7 @@ function ChatInterface(props) {
             </VStack>
           </Container>
         </GridItem>
-        <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md">
+        <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md" className="current-chat-window">
           <Container height="100%">
             <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'}>Current Chat ({currentChat?.title})</Heading>
             {/* scroll area for messages */}
