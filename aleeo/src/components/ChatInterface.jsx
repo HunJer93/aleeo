@@ -124,7 +124,7 @@ function ChatInterface(props) {
         px="10vw"
         py="10vh"
         >
-        <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md">
+        <GridItem colSpan={1} border="1px solid #ccc" borderRadius="md" className="conversations-title-column">
           <Container
             height="100%"
             minHeight="3.5rem"
@@ -170,66 +170,66 @@ function ChatInterface(props) {
             <Box width="100%" display="flex" justifyContent="center">
               <Separator size={'lg'} width="80%" mx="auto" />
             </Box>
-            <VStack paddingTop={'1rem'} width="100%">
-            {/* scroll area for chats */}
-            <ScrollArea.Root height={"55rem"}>
-              <ScrollArea.Viewport
-                css={{
-                  "--scroll-shadow-size": "4rem",
-                  maskImage:
-                    "linear-gradient(#000,#000,transparent 0,#000 var(--scroll-shadow-size),#000 calc(100% - var(--scroll-shadow-size)),transparent)",
-                  "&[data-at-top]": {
+            <VStack paddingTop={'1rem'} width="100%" className='current-chat-window'>
+              {/* scroll area for chats */}
+              <ScrollArea.Root height={"55rem"}>
+                <ScrollArea.Viewport
+                  css={{
+                    "--scroll-shadow-size": "4rem",
                     maskImage:
-                      "linear-gradient(180deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
-                  },
-                  "&[data-at-bottom]": {
-                    maskImage:
-                      "linear-gradient(0deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
-                  },
-                }}
-              >
-              <ScrollArea.Content>
-                {conversations?.map((convo) => (
-                  <Box key={convo.id} width="100%" mb={5} py={3} px={1}>
-                    <HStack width="100%" alignItems="center" justifyContent="space-between">
-                      <Box flex="1 1 auto" minWidth={0}>
-                        <Button
-                          variant="ghost"
-                          onClick={() => setCurrentChat(convo)}
-                          key={convo.id}
-                          textAlign="left"
-                          whiteSpace="normal"
-                          wordBreak="break-word"
-                          width="100%"
-                        >
-                          {convo.title}
-                        </Button>
-                      </Box>
-                      <Box flexShrink={0}>
-                        <Popover.Root>
-                          <Popover.Trigger>
-                            <IconButton aria-label="conversation-options" variant="ghost" size="xs">
-                              <HiDotsHorizontal />
-                            </IconButton>
-                          </Popover.Trigger>
-                          <Popover.Content>
-                            <VStack spacing={1}>
-                              <Button variant="link" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
-                              <Button variant="link" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
-                            </VStack>
-                          </Popover.Content>
-                        </Popover.Root>
-                      </Box>
-                    </HStack>
-                  </Box>
-                ))}
-              </ScrollArea.Content>
-              </ScrollArea.Viewport>
-              <ScrollArea.Scrollbar>
-              <ScrollArea.Thumb />
-              </ScrollArea.Scrollbar>
-              <ScrollArea.Corner />
-            </ScrollArea.Root>
+                      "linear-gradient(#000,#000,transparent 0,#000 var(--scroll-shadow-size),#000 calc(100% - var(--scroll-shadow-size)),transparent)",
+                    "&[data-at-top]": {
+                      maskImage:
+                        "linear-gradient(180deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
+                    },
+                    "&[data-at-bottom]": {
+                      maskImage:
+                        "linear-gradient(0deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
+                    },
+                  }}
+                >
+                <ScrollArea.Content>
+                  {conversations?.map((convo) => (
+                    <Box key={convo.id} width="100%" mb={5} py={3} px={1}>
+                      <HStack width="100%" alignItems="center" justifyContent="space-between">
+                        <Box flex="1 1 auto" minWidth={0}>
+                          <Button
+                            variant="ghost"
+                            onClick={() => setCurrentChat(convo)}
+                            key={convo.id}
+                            textAlign="left"
+                            whiteSpace="normal"
+                            wordBreak="break-word"
+                            width="100%"
+                          >
+                            {convo.title}
+                          </Button>
+                        </Box>
+                        <Box flexShrink={0}>
+                          <Popover.Root>
+                            <Popover.Trigger>
+                              <IconButton aria-label="conversation-options" variant="ghost" size="xs">
+                                <HiDotsHorizontal />
+                              </IconButton>
+                            </Popover.Trigger>
+                            <Popover.Content>
+                              <VStack spacing={1}>
+                                <Button variant="link" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
+                                <Button variant="link" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
+                              </VStack>
+                            </Popover.Content>
+                          </Popover.Root>
+                        </Box>
+                      </HStack>
+                    </Box>
+                  ))}
+                </ScrollArea.Content>
+                </ScrollArea.Viewport>
+                <ScrollArea.Scrollbar>
+                <ScrollArea.Thumb />
+                </ScrollArea.Scrollbar>
+                <ScrollArea.Corner />
+              </ScrollArea.Root>
 
             </VStack>
           </Container>

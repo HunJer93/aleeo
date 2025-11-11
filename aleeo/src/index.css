@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Hide conversations title column at <=1400px (approx 150% zoom) */
+@media (max-width: 1400px) {
+  .conversations-title-column {
+    display: none !important;
+  }
+}
