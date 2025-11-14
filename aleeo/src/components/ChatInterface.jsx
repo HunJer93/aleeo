@@ -219,7 +219,7 @@ function ChatInterface(props) {
                                   top: "-15px",
                                   transform: "translateX(-60px)",
                                   zIndex: 9999,
-                                  minWidth: "80px",
+                                  minWidth: toggleRename ? "200px" : "80px",
                                   maxWidth: "120px",
                                   boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
                                   background: "white",
@@ -236,7 +236,7 @@ function ChatInterface(props) {
                                       <Field.Label srOnly>Rename Conversation</Field.Label>
                                         <Input
                                           type="text"
-                                          placeholder="New Conversation Title"
+                                          placeholder="Rename conversation title..."
                                           autoFocus
                                           onBlur={(e) => {
                                             handleEditConversation(convo.id, e.target.value);
