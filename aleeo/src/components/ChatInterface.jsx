@@ -212,6 +212,7 @@ function ChatInterface(props) {
                               </IconButton>
                             </Popover.Trigger>
                             <Portal>
+                            <Popover.Positioner>
                               <Popover.Content
                                 style={{
                                   position: "absolute",
@@ -219,19 +220,22 @@ function ChatInterface(props) {
                                   top: "40px",
                                   transform: "translateX(10%)",
                                   zIndex: 9999,
-                                  minWidth: "120px",
+                                  minWidth: "80px",
+                                  maxWidth: "120px",
                                   boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
                                   background: "white",
                                   borderRadius: "8px",
                                   border: "1px solid #e2e8f0",
-                                  padding: "8px 0"
+                                  padding: "2px"
                                 }}
                               >
-                                <VStack spacing={1}>
-                                  <Button variant="link" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
-                                  <Button variant="link" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
+                              <Popover.Arrow />
+                                <VStack spacing={0} align="stretch" width="100%" p={0} m={0}>
+                                  <Button variant="link" size="sm" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
+                                  <Button variant="link" size="sm" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
                                 </VStack>
                               </Popover.Content>
+                            </Popover.Positioner>
                             </Portal>
                           </Popover.Root>
                         </Box>
