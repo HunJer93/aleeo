@@ -36,6 +36,7 @@ function ChatInterface(props) {
     const [currentChat, setCurrentChat] = React.useState(userData?.conversations ? userData.conversations[0] : null);
     const [newMessage, setNewMessage] = React.useState("");
     const [toggleRename, setToggleRename] = React.useState(false);
+    const [openPopoverId, setOpenPopoverId] = React.useState(null);
 
     const chatBuilder = (conversations) => {
       // Handler for adding a new conversation
@@ -205,7 +206,17 @@ function ChatInterface(props) {
                           </Button>
                         </Box>
                         <Box flexShrink={0}>
-                          <Popover.Root>
+                          <Popover.Root 
+                            open={openPopoverId === convo.id} 
+                            onOpenChange={(details) => {
+                              if (details.open) {
+                                setOpenPopoverId(convo.id);
+                              } else {
+                                setOpenPopoverId(null);
+                                setToggleRename(false);
+                              }
+                            }}
+                          >
                             <Popover.Trigger>
                               <IconButton aria-label="conversation-options" variant="ghost" size="xs">
                                 <HiDotsHorizontal />
@@ -241,11 +252,13 @@ function ChatInterface(props) {
                                           onBlur={(e) => {
                                             handleEditConversation(convo.id, e.target.value);
                                             setToggleRename(false);
+                                            setOpenPopoverId(null);
                                           }}
                                           onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
                                               handleEditConversation(convo.id, e.target.value);
                                               setToggleRename(false);
+                                              setOpenPopoverId(null);
                                             }
                                           }}
                                         />
