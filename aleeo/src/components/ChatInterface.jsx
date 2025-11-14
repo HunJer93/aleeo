@@ -78,8 +78,10 @@ function ChatInterface(props) {
         }
       };
 
-      const handleEditConversation = async (conversationId, newCovoTitle) => {
-        const response = await renameConversation(conversationId, newCovoTitle);
+      const handleEditConversation = async (conversationId, newConvoTitle) => {
+        if (newConvoTitle.trim() === "") return;
+
+        const response = await renameConversation(conversationId, newConvoTitle);
 
         // update in userData.conversations
         const convo = userData.conversations.find((convo) => convo.id === conversationId);
@@ -241,8 +243,7 @@ function ChatInterface(props) {
                               >
                               <Popover.Arrow />
                                 <VStack spacing={0} align="stretch" width="100%" p={0} m={0}>
-                                  <Button variant="link" size="sm" onClick={() => setToggleRename(!toggleRename)}>Rename</Button>
-                                  { toggleRename && (
+                                { toggleRename ? (
                                     <Field.Root>
                                       <Field.Label srOnly>Rename Conversation</Field.Label>
                                         <Input
@@ -263,8 +264,9 @@ function ChatInterface(props) {
                                           }}
                                         />
                                     </Field.Root>
-                                  )}
-
+                                ) : (
+                                  <Button variant="link" size="sm" onClick={() => setToggleRename(!toggleRename)}>Rename</Button>
+                                )}
                                   <Button variant="link" size="sm" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
                                 </VStack>
                               </Popover.Content>
