@@ -1,4 +1,4 @@
-import { Box, Button, Container, For, GridItem, Heading, HStack, IconButton, Popover, Portal, ScrollArea, Separator, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, Field, For, GridItem, Heading, HStack, IconButton, Input, Popover, Portal, ScrollArea, Separator, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
 import React from 'react'
 import { FaPlusCircle } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -35,6 +35,7 @@ function ChatInterface(props) {
 
     const [currentChat, setCurrentChat] = React.useState(userData?.conversations ? userData.conversations[0] : null);
     const [newMessage, setNewMessage] = React.useState("");
+    const [toggleRename, setToggleRename] = React.useState(false);
 
     const chatBuilder = (conversations) => {
       // Handler for adding a new conversation
@@ -76,10 +77,9 @@ function ChatInterface(props) {
         }
       };
 
-      const handleEditConversation = async (conversationId) => {
-        const response = await renameConversation(conversationId, "Renamed Conversation Placeholder Title");
+      const handleEditConversation = async (conversationId, newCovoTitle) => {
+        const response = await renameConversation(conversationId, newCovoTitle);
 
-        console.log("Rename response: ", response);
         // update in userData.conversations
         const convo = userData.conversations.find((convo) => convo.id === conversationId);
         if (convo) {
@@ -230,7 +230,28 @@ function ChatInterface(props) {
                               >
                               <Popover.Arrow />
                                 <VStack spacing={0} align="stretch" width="100%" p={0} m={0}>
-                                  <Button variant="link" size="sm" onClick={() => handleEditConversation(convo.id)}>Rename</Button>
+                                  <Button variant="link" size="sm" onClick={() => setToggleRename(!toggleRename)}>Rename</Button>
+                                  { toggleRename && (
+                                    <Field.Root>
+                                      <Field.Label srOnly>Rename Conversation</Field.Label>
+                                        <Input
+                                          type="text"
+                                          placeholder="New Conversation Title"
+                                          autoFocus
+                                          onBlur={(e) => {
+                                            handleEditConversation(convo.id, e.target.value);
+                                            setToggleRename(false);
+                                          }}
+                                          onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                              handleEditConversation(convo.id, e.target.value);
+                                              setToggleRename(false);
+                                            }
+                                          }}
+                                        />
+                                    </Field.Root>
+                                  )}
+
                                   <Button variant="link" size="sm" onClick={() => handleDeleteConversation(convo.id)}>Delete</Button>
                                 </VStack>
                               </Popover.Content>
