@@ -216,9 +216,8 @@ function ChatInterface(props) {
                               <Popover.Content
                                 style={{
                                   position: "absolute",
-                                  left: "10%",
-                                  top: "40px",
-                                  transform: "translateX(10%)",
+                                  top: "-15px",
+                                  transform: "translateX(-60px)",
                                   zIndex: 9999,
                                   minWidth: "80px",
                                   maxWidth: "120px",
