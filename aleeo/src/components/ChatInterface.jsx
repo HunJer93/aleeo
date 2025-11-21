@@ -346,7 +346,67 @@ function ChatInterface(props) {
       )
       };
 
-      const messageClassifier = (message) => {
+      const formatMessageContent = (content) => {
+      // Split content into paragraphs and format basic elements
+      const paragraphs = content.split('\n\n');
+      
+      return paragraphs.map((paragraph, index) => {
+        // Handle headers
+        if (paragraph.startsWith('###')) {
+          return (
+            <h4 key={index} style={{ fontWeight: 'bold', marginTop: '16px', marginBottom: '8px', fontSize: '1.1em' }}>
+              {paragraph.replace('###', '').trim()}
+            </h4>
+          );
+        }
+        if (paragraph.startsWith('##')) {
+          return (
+            <h3 key={index} style={{ fontWeight: 'bold', marginTop: '20px', marginBottom: '10px', fontSize: '1.2em' }}>
+              {paragraph.replace('##', '').trim()}
+            </h3>
+          );
+        }
+        
+        // Handle lists
+        if (paragraph.includes('- ')) {
+          const listItems = paragraph.split('\n').filter(line => line.trim().startsWith('- '));
+          return (
+            <ul key={index} style={{ marginLeft: '20px', marginBottom: '12px' }}>
+              {listItems.map((item, itemIndex) => (
+                <li key={itemIndex} style={{ marginBottom: '4px' }}>
+                  {item.replace('- ', '').trim()}
+                </li>
+              ))}
+            </ul>
+          );
+        }
+        
+        // Handle code blocks
+        if (paragraph.includes('```')) {
+          return (
+            <pre key={index} style={{ 
+              backgroundColor: '#f4f4f4', 
+              padding: '12px', 
+              borderRadius: '4px', 
+              marginBottom: '12px',
+              overflow: 'auto',
+              fontSize: '0.9em'
+            }}>
+              <code>{paragraph.replace(/```[\w]*\n?/g, '').replace(/```/g, '')}</code>
+            </pre>
+          );
+        }
+        
+        // Regular paragraphs
+        return (
+          <p key={index} style={{ marginBottom: '12px', lineHeight: '1.6' }}>
+            {paragraph}
+          </p>
+        );
+      });
+    };
+
+    const messageClassifier = (message) => {
       if (message.role === 'user') {
         return (
           <Box
@@ -374,7 +434,12 @@ function ChatInterface(props) {
             px={4}
             py={2}
           >
-            <p><strong>{message.role}:</strong> {message.content} </p>
+            <div>
+              <strong>{message.role}:</strong> 
+              <div style={{ marginTop: '8px' }}>
+                {formatMessageContent(message.content)}
+              </div>
+            </div>
           </Box>
         );
       }
