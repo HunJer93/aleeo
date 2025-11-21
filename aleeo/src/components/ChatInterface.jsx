@@ -58,15 +58,26 @@ function ChatInterface(props) {
       // Handler for submitting a message
       const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
-        // send message via API
-        const responseMessage = await createMessage({ role: 'user', content: newMessage, conversation_id: currentChat.id });
 
-        // load response into chat
-        if (responseMessage) {
-          currentChat?.messages.push(responseMessage);
-          setCurrentChat({...currentChat});
-          // wipe new message area
-          setNewMessage("");
+        try {
+          // send message via API
+          const messageResponse = await createMessage({ role: 'user', content: newMessage, conversation_id: currentChat.id });
+
+          // load response into chat
+          if (messageResponse && messageResponse.userMessage && messageResponse.assistantMessage) {
+            // destructure messages
+            const { userMessage, assistantMessage } = messageResponse;
+            // push user message and then the response message
+            currentChat?.messages.push(userMessage);
+            currentChat?.messages.push(assistantMessage);
+            // trigger re-render
+            setCurrentChat({...currentChat});
+            // wipe new message area
+            setNewMessage("");
+          }
+        } catch (error) {
+          console.error('Error sending message:', error);
+          alert('Failed to send message. Please try again.');
         }
       };
 

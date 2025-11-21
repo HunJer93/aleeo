@@ -14,11 +14,20 @@ class Api::V1::MessagesController < ApplicationController
   end
 
   # POST /messages
+  # chat with OpenAI API and return the AI assistant's message
   def create
     @message = Message.new(message_params)
 
     if @message.save
-      render json: MessageSerializer.new(@message).serializable_hash[:data][:attributes], status: :created
+      # Call OpenAI API to get assistant response
+      @assistant_response = openai_client.chat(@message.conversation.messages.map(&:format_for_openai))
+      # create assistant message in the conversation
+      @assistant_message = Message.new(conversation: @message.conversation, role: "assistant", content: @assistant_response)
+      # serialize and return both user and assistant messages
+      render json: {
+        user_message: MessageSerializer.new(@message).serializable_hash[:data][:attributes],
+        assistant_message: MessageSerializer.new(@assistant_message).serializable_hash[:data][:attributes]
+      }, status: :created
     else
       render json: @message.errors, status: :unprocessable_entity
     end
@@ -47,5 +56,9 @@ class Api::V1::MessagesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def message_params
       params.expect(message: [ :conversation_id, :role, :content ])
+    end
+
+    def openai_client
+      @openai_client ||= ::OpenaiClient.new
     end
 end
