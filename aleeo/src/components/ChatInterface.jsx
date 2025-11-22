@@ -1,8 +1,11 @@
 import { Box, Button, Container, Field, For, GridItem, Heading, HStack, IconButton, Input, Popover, Portal, ScrollArea, Separator, SimpleGrid, Spinner, Textarea, VStack } from '@chakra-ui/react';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FaPlusCircle } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { createConversation, createMessage, deleteConversation, renameConversation } from '../utility/apiUtils';
+import { useAppDispatch, useConversations } from '../store/hooks';
+import { setCurrentConversation } from '../store/slices/conversationsSlice';
+import { createNewConversation, sendMessage, renameConversationThunk, deleteConversationThunk } from '../store/thunks/authThunks';
+import LogoutButton from './LogoutButton';
 
 // ChatInterface component that accepts userData as a prop
 
@@ -28,31 +31,34 @@ import { createConversation, createMessage, deleteConversation, renameConversati
 //     },
 //     ...
 //   ]
-// }s
+// }
 
 function ChatInterface(props) {
     const { userData } = props;
+    const dispatch = useAppDispatch();
+    const { conversations, currentConversation } = useConversations();
 
-    const [currentChat, setCurrentChat] = React.useState(userData?.conversations ? userData.conversations[0] : null);
     const [newMessage, setNewMessage] = React.useState("");
     const [toggleRename, setToggleRename] = React.useState(false);
     const [openPopoverId, setOpenPopoverId] = React.useState(null);
     const [toggleSpinner, setToggleSpinner] = React.useState(false);
 
-    const chatBuilder = (conversations) => {
+    // Set initial current conversation from Redux state only once when conversations first load
+    useEffect(() => {
+        if (!currentConversation && conversations.length > 0) {
+            dispatch(setCurrentConversation(conversations[0]));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch, currentConversation, conversations.length]);
+
+    const chatBuilder = (conversationsData) => {
       // Handler for adding a new conversation
       const handleAddConversation = async () => {
         // Generate a new conversation object
-        const newCovoTitle =  `New Conversation ${conversations.length + 1}`;
-        // Add to userData.conversations
-        if (userData && userData.conversations) {
-        // post request to create new conversation
-          const newConvo = await createConversation({ user_id: userData.id, title: newCovoTitle });
-          if (newConvo) {
-            userData.conversations.push(newConvo);
-            setCurrentChat(newConvo);
-          }
-          
+        const newCovoTitle =  `New Conversation ${conversationsData.length + 1}`;
+        // Add to conversations via Redux
+        if (userData) {
+          dispatch(createNewConversation({ user_id: userData.id, title: newCovoTitle }));
         }
       };
 
@@ -60,34 +66,19 @@ function ChatInterface(props) {
       const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
-        // push conversation to stack for better UX
-        const messageObj = { role: 'user', content: newMessage, conversation_id: currentChat.id };
-        currentChat?.messages.push(messageObj);
-        setCurrentChat({...currentChat});
-        
         // Clear input and show spinner immediately
         const currentMessage = newMessage;
         setNewMessage("");
         setToggleSpinner(true);
 
         try {
-          // send message via API
-          const messageResponse = await createMessage({ role: 'user', content: currentMessage, conversation_id: currentChat.id });
-
-          // load response into chat
-          if (messageResponse && messageResponse.assistantMessage) {
-            // destructure messages
-            const { assistantMessage } = messageResponse;
-            // push ai response message
-            currentChat?.messages.push(assistantMessage);
-            // trigger re-render
-            setCurrentChat({...currentChat});
-          }
+          // send message via Redux thunk
+          const messageData = { role: 'user', content: currentMessage, conversation_id: currentConversation.id };
+          await dispatch(sendMessage({ messageData, conversationId: currentConversation.id }));
         } catch (error) {
           console.error('Error sending message:', error);
           alert('Failed to send message. Please try again.');
         } finally {
-          // turn off spinner
           setToggleSpinner(false);
         }
       };
@@ -103,36 +94,11 @@ function ChatInterface(props) {
       const handleEditConversation = async (conversationId, newConvoTitle) => {
         if (newConvoTitle.trim() === "") return;
 
-        const response = await renameConversation(conversationId, newConvoTitle);
-
-        // update in userData.conversations
-        const convo = userData.conversations.find((convo) => convo.id === conversationId);
-        if (convo) {
-          // update title from response
-          convo.title = response?.title;
-          // if renamed convo is currentChat, update currentChat
-          if (currentChat.id === conversationId) {
-            setCurrentChat({...currentChat, title: convo.title});
-          } else {
-            setCurrentChat({...currentChat});
-          }
-        }
-
+        dispatch(renameConversationThunk({ conversationId, newTitle: newConvoTitle }));
       };
 
       const handleDeleteConversation = async (conversationId) => {
-        await deleteConversation(conversationId);
-        // remove from userData.conversations
-        const index = userData.conversations.findIndex((convo) => convo.id === conversationId);
-        if (index !== -1) {
-          userData.conversations.splice(index, 1);
-          // if deleted convo is currentChat, set currentChat to first convo or null
-          if (currentChat.id === conversationId) {
-            setCurrentChat(userData.conversations.length > 0 ? userData.conversations[0] : null);
-          } else {
-            setCurrentChat({...currentChat});
-          }
-        }
+        dispatch(deleteConversationThunk(conversationId));
       };
 
       return (
@@ -160,36 +126,39 @@ function ChatInterface(props) {
           {/* conversations side bar */}
             <HStack
               alignItems="center"
-              justifyContent="center"
+              justifyContent="space-between"
               width="100%"
               paddingTop={'1rem'}
               paddingBottom={'1rem'}
               flexWrap="wrap"
               style={{ flexShrink: 0 }}
             >
-              <Heading
-                size="md"
-                m={0}
-                display="flex"
-                alignItems="center"
-                whiteSpace="normal" // <-- allow wrapping
-                wordBreak="break-word" // <-- break long words
-              >
-                Conversations
-              </Heading>
-              <IconButton
-                aria-label="add-conversation"
-                rounded="full"
-                size={"2xs"}
-                colorPalette={"purple"}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                mt={1}
-                onClick={handleAddConversation}
-              >
-                <FaPlusCircle />
-              </IconButton>
+              <HStack>
+                <Heading
+                  size="md"
+                  m={0}
+                  display="flex"
+                  alignItems="center"
+                  whiteSpace="normal" // <-- allow wrapping
+                  wordBreak="break-word" // <-- break long words
+                >
+                  Conversations
+                </Heading>
+                <IconButton
+                  aria-label="add-conversation"
+                  rounded="full"
+                  size={"2xs"}
+                  colorPalette={"purple"}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  mt={1}
+                  onClick={handleAddConversation}
+                >
+                  <FaPlusCircle />
+                </IconButton>
+              </HStack>
+              <LogoutButton size="xs" />
             </HStack>
             <Box width="100%" display="flex" justifyContent="center" style={{ flexShrink: 0 }}>
               <Separator size={'lg'} width="80%" mx="auto" />
@@ -219,7 +188,7 @@ function ChatInterface(props) {
                         <Box flex="1 1 auto" minWidth={0}>
                           <Button
                             variant="ghost"
-                            onClick={() => setCurrentChat(convo)}
+                            onClick={() => dispatch(setCurrentConversation(convo))}
                             key={convo.id}
                             textAlign="left"
                             whiteSpace="normal"
@@ -312,7 +281,7 @@ function ChatInterface(props) {
         </GridItem>
         <GridItem colSpan={5} border="1px solid #ccc" borderRadius="md" className="current-chat-window" style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           <Container style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'} style={{ flexShrink: 0 }}>Current Chat ({currentChat?.title})</Heading>
+            <Heading size="lg" paddingTop={'1rem'} paddingBottom={'2rem'} style={{ flexShrink: 0 }}>Current Chat ({currentConversation?.title})</Heading>
             {/* scroll area for messages */}
             <ScrollArea.Root style={{ flex: 1, minHeight: 0 }}>
               <ScrollArea.Viewport
@@ -331,7 +300,7 @@ function ChatInterface(props) {
                 }}
               >
               <ScrollArea.Content>
-                {messageBuilder(currentChat?.messages)}
+                {messageBuilder(currentConversation?.messages)}
               </ScrollArea.Content>
               </ScrollArea.Viewport>
               <ScrollArea.Scrollbar>
@@ -491,8 +460,10 @@ function ChatInterface(props) {
     
   return (
     <div>
-        {chatBuilder(userData?.conversations)}
+        {chatBuilder(conversations)}
     {console.log("User Data in Chat Interface: ", JSON.stringify(userData, 1, 1))}
+    {console.log("Conversations from Redux: ", JSON.stringify(conversations, 1, 1))}
+    {console.log("Current Conversation from Redux: ", JSON.stringify(currentConversation, 1, 1))}
     </div>
     
   )

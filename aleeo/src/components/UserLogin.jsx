@@ -1,10 +1,14 @@
 import { Button, Center, Field, Input, Link, Stack } from '@chakra-ui/react';
-import React, { useState } from 'react'
-import { userLogin } from '../utility/apiUtils';
+import React, { useState, useEffect } from 'react'
+import { useAppDispatch, useAuth } from '../store/hooks';
+import { loginUser } from '../store/thunks/authThunks';
+import { clearError } from '../store/slices/authSlice';
 import ChatInterface from './ChatInterface';
 import logo  from '../assets/aleeo_logo.png';
 
 function UserLogin(props) {
+  const dispatch = useAppDispatch();
+  const { isAuthenticated, user, loading, error } = useAuth();
 
   const [newUser, setNewUser] = useState(false);
   const [userSignIn, setUserSignIn] = useState({
@@ -20,17 +24,24 @@ function UserLogin(props) {
     confirm_password: ''
   });
 
-  const [userData, setUserData] = useState(null);
+  // Clear any errors when component unmounts or user switches forms
+  useEffect(() => {
+    return () => {
+      if (error) {
+        dispatch(clearError());
+      }
+    };
+  }, [dispatch, error]);
 
-
-  const handleSignin = async (error) => {
-    error.preventDefault();
-    const data = await userLogin(userSignIn);
-    setUserData(data);
+  const handleSignin = async (event) => {
+    event.preventDefault();
+    dispatch(loginUser(userSignIn));
   };
 
-  const handleCreateUser = (error) => {
-    error.preventDefault();
+  const handleCreateUser = (event) => {
+    event.preventDefault();
+    // TODO: Implement user registration
+    console.log('User registration not implemented yet');
   };
 
   const loginOptions = () => {
@@ -68,9 +79,14 @@ function UserLogin(props) {
           />
         </Field.Root>
 
-        <Button colorPalette={"blue"} variant="surface" onClick={handleSignin}>
-          Sign in
+        <Button colorPalette={"blue"} variant="surface" onClick={handleSignin} disabled={loading}>
+          {loading ? 'Signing in...' : 'Sign in'}
         </Button>
+        {error && (
+          <div style={{ color: 'red', fontSize: '14px', textAlign: 'center' }}>
+            {error}
+          </div>
+        )}
         <Link
           variant="underline" onClick={(e) => setNewUser(!e.target.value)}
         >
@@ -158,15 +174,15 @@ function UserLogin(props) {
   </>
 
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: userData ? 'hidden' : 'auto' }}>
-      {!userData && (
+    <div style={{ width: '100vw', height: '100vh', overflow: isAuthenticated ? 'hidden' : 'auto' }}>
+      {!isAuthenticated && (
         <Center>
           <img src={logo} alt="Aleeo Logo" width="100" height="100"/>
         </Center>
       )}
         
         {/* placeholder for user sign-in. Routing handled after POC finished */}
-        {userData ? <ChatInterface userData={userData} /> : loginOptions()}
+        {isAuthenticated ? <ChatInterface userData={user} /> : loginOptions()}
         
     </div>
   )
