@@ -1,4 +1,4 @@
-import { Box, Button, Container, Field, For, GridItem, Heading, HStack, IconButton, Input, Popover, Portal, ScrollArea, Separator, SimpleGrid, Textarea, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, Field, For, GridItem, Heading, HStack, IconButton, Input, Popover, Portal, ScrollArea, Separator, SimpleGrid, Spinner, Textarea, VStack } from '@chakra-ui/react';
 import React from 'react'
 import { FaPlusCircle } from "react-icons/fa";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -37,6 +37,7 @@ function ChatInterface(props) {
     const [newMessage, setNewMessage] = React.useState("");
     const [toggleRename, setToggleRename] = React.useState(false);
     const [openPopoverId, setOpenPopoverId] = React.useState(null);
+    const [toggleSpinner, setToggleSpinner] = React.useState(false);
 
     const chatBuilder = (conversations) => {
       // Handler for adding a new conversation
@@ -59,25 +60,35 @@ function ChatInterface(props) {
       const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
+        // push conversation to stack for better UX
+        const messageObj = { role: 'user', content: newMessage, conversation_id: currentChat.id };
+        currentChat?.messages.push(messageObj);
+        setCurrentChat({...currentChat});
+        
+        // Clear input and show spinner immediately
+        const currentMessage = newMessage;
+        setNewMessage("");
+        setToggleSpinner(true);
+
         try {
           // send message via API
-          const messageResponse = await createMessage({ role: 'user', content: newMessage, conversation_id: currentChat.id });
+          const messageResponse = await createMessage({ role: 'user', content: currentMessage, conversation_id: currentChat.id });
 
           // load response into chat
-          if (messageResponse && messageResponse.userMessage && messageResponse.assistantMessage) {
+          if (messageResponse && messageResponse.assistantMessage) {
             // destructure messages
-            const { userMessage, assistantMessage } = messageResponse;
-            // push user message and then the response message
-            currentChat?.messages.push(userMessage);
+            const { assistantMessage } = messageResponse;
+            // push ai response message
             currentChat?.messages.push(assistantMessage);
             // trigger re-render
             setCurrentChat({...currentChat});
-            // wipe new message area
-            setNewMessage("");
           }
         } catch (error) {
           console.error('Error sending message:', error);
           alert('Failed to send message. Please try again.');
+        } finally {
+          // turn off spinner
+          setToggleSpinner(false);
         }
       };
 
@@ -453,6 +464,25 @@ function ChatInterface(props) {
                         messageClassifier(msg)
                     )}
                     </For>
+                    {toggleSpinner && (
+                      <Box
+                        bg="purple.100"
+                        borderRadius="lg"
+                        alignSelf="flex-start"
+                        maxW="70%"
+                        mb={2}
+                        px={4}
+                        py={2}
+                      >
+                        <div>
+                          <strong>assistant:</strong> 
+                          <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center' }}>
+                            <Spinner size="sm" mr={2} />
+                            <span style={{ fontStyle: 'italic', color: '#666' }}>Thinking...</span>
+                          </div>
+                        </div>
+                      </Box>
+                    )}
                     </VStack>
 
         )

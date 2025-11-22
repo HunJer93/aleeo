@@ -23,9 +23,10 @@ class Api::V1::MessagesController < ApplicationController
       @assistant_response = openai_client.chat(@message.conversation.messages.map(&:format_for_openai))
       # create assistant message in the conversation
       @assistant_message = Message.new(conversation: @message.conversation, role: "assistant", content: @assistant_response)
-      # serialize and return both user and assistant messages
+      @assistant_message.save!
+
+      # serialize and return assistant messages (user message state handled in frontend)
       render json: {
-        user_message: MessageSerializer.new(@message).serializable_hash[:data][:attributes],
         assistant_message: MessageSerializer.new(@assistant_message).serializable_hash[:data][:attributes]
       }, status: :created
     else

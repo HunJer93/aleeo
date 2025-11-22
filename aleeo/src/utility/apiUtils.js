@@ -27,8 +27,8 @@ export const createConversation = async (params) => {
 export const createMessage = async (params) => {
   try {
     const response = await apiClient.post('/messages', params)
-    const { user_message, assistant_message } = response.data;
-    return { userMessage: user_message, assistantMessage: assistant_message };
+    const { assistant_message } = response.data;
+    return { assistantMessage: assistant_message };
 
   } catch (error) {
     alert("Sending message failed!");
