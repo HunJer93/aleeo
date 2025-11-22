@@ -167,7 +167,7 @@ function ChatInterface(props) {
               flexWrap="wrap"
               style={{ flexShrink: 0 }}
             >
-              <HStack alignItems="center">
+              <HStack alignItems="center" justifyContent="center" width="100%" px={4}>
                 <Heading
                   size="md"
                   m={0}
@@ -187,25 +187,18 @@ function ChatInterface(props) {
                   alignItems="center"
                   justifyContent="center"
                   mt={1}
+                  ml={2}
                   onClick={handleAddConversation}
                 >
                   <FaPlusCircle />
                 </IconButton>
               </HStack>
-              <Button
-                size="xs"
-                variant="outline"
-                colorPalette="red"
-                onClick={onLogout}
-              >
-                Logout
-              </Button>
             </HStack>
             <Box width="100%" display="flex" justifyContent="center" style={{ flexShrink: 0 }}>
               <Separator size={'lg'} width="80%" mx="auto" />
             </Box>
             <VStack paddingTop={'1rem'} width="100%" className='current-chat-window' style={{ flex: 1, minHeight: 0 }}>
-              {/* scroll area for chats */}
+              {/* scroll area for conversations column */}
               <ScrollArea.Root height={"55rem"}>
                 <ScrollArea.Viewport
                   css={{
@@ -309,6 +302,7 @@ function ChatInterface(props) {
                       </HStack>
                     </Box>
                   ))}
+                  
                 </ScrollArea.Content>
                 </ScrollArea.Viewport>
                 <ScrollArea.Scrollbar>
@@ -316,7 +310,15 @@ function ChatInterface(props) {
                 </ScrollArea.Scrollbar>
                 <ScrollArea.Corner />
               </ScrollArea.Root>
-
+              <Button
+                size="xs"
+                variant="outline"
+                colorPalette="red"
+                onClick={onLogout}
+                display={'flex'}
+              >
+                Logout
+              </Button>
             </VStack>
           </Container>
         </GridItem>
