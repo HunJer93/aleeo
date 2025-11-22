@@ -26,6 +26,19 @@ export const checkCurrentUser = async () => {
   }
 };
 
+export const createNewUser = async (params) => {
+  try {
+    const response = await apiClient.post('/users', { user: params }, {
+      withCredentials: true,
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response.data;
+  } catch (error) {
+    alert("User creation failed!");
+    console.error('User creation failed:', error);
+  }
+};
+
 export const logout = async () => {
   try {
     await apiClient.delete('/logout', {

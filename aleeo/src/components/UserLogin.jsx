@@ -1,13 +1,13 @@
 import { Button, Center, Field, Input, Link, Stack } from '@chakra-ui/react';
 import React, { useState } from 'react'
-import { userLogin } from '../utility/apiUtils';
+import { createNewUser, userLogin } from '../utility/apiUtils';
 import { useAuth } from '../contexts/AuthContext';
 import ChatInterface from './ChatInterface';
 import logo  from '../assets/aleeo_logo.png';
 
 function UserLogin(props) {
 
-  const { userData, login, logout, loading, isAuthenticated } = useAuth();
+  const { userData, login, logout, loading, _isAuthenticated } = useAuth();
   
   const [newUser, setNewUser] = useState(false);
   const [userSignIn, setUserSignIn] = useState({
@@ -32,7 +32,18 @@ function UserLogin(props) {
     }
   };
 
-  const handleCreateUser = (error) => {
+  const handleCreateUser = async (error) => {
+    try {
+      const data = await createNewUser(newUserInfo);
+      if (data) {
+        login(data); // Log in the new user after creation
+        setNewUser(false);
+      }
+    } catch (error) {
+      alert("User creation failed!");
+      console.error('User creation failed:', error);
+    }
+    
     error.preventDefault();
   };
 
@@ -75,7 +86,7 @@ function UserLogin(props) {
           Sign in
         </Button>
         <Link
-          variant="underline" onClick={(e) => setNewUser(!e.target.value)}
+          variant="underline" onClick={() => setNewUser(true)}
         >
           Create Account
         </Link>
@@ -156,6 +167,11 @@ function UserLogin(props) {
           <Button colorPalette={"blue"} variant="surface" onClick={handleCreateUser}>
             Create Account
           </Button>
+        <Link
+          variant="underline" onClick={() => setNewUser(false)}
+        >
+          Back to Sign In
+        </Link>
       </Stack>
     </Center>
   </>
