@@ -1,11 +1,14 @@
 import { Button, Center, Field, Input, Link, Stack } from '@chakra-ui/react';
 import React, { useState } from 'react'
 import { userLogin } from '../utility/apiUtils';
+import { useAuth } from '../contexts/AuthContext';
 import ChatInterface from './ChatInterface';
 import logo  from '../assets/aleeo_logo.png';
 
 function UserLogin(props) {
 
+  const { userData, login, logout, loading, isAuthenticated } = useAuth();
+  
   const [newUser, setNewUser] = useState(false);
   const [userSignIn, setUserSignIn] = useState({
     username: '',
@@ -20,13 +23,13 @@ function UserLogin(props) {
     confirm_password: ''
   });
 
-  const [userData, setUserData] = useState(null);
-
 
   const handleSignin = async (error) => {
     error.preventDefault();
     const data = await userLogin(userSignIn);
-    setUserData(data);
+    if (data) {
+      login(data); // Use the auth context login function
+    }
   };
 
   const handleCreateUser = (error) => {
@@ -159,15 +162,31 @@ function UserLogin(props) {
 
   return (
     <div style={{ width: '100vw', height: '100vh', overflow: userData ? 'hidden' : 'auto' }}>
-      {!userData && (
-        <Center>
-          <img src={logo} alt="Aleeo Logo" width="100" height="100"/>
+      {loading && (
+        <Center style={{ height: '100vh' }}>
+          <div>Loading...</div>
         </Center>
       )}
-        
-        {/* placeholder for user sign-in. Routing handled after POC finished */}
-        {userData ? <ChatInterface userData={userData} /> : loginOptions()}
-        
+      
+      {!loading && (
+        <>
+          {!userData && (
+            <Center>
+              <img src={logo} alt="Aleeo Logo" width="100" height="100"/>
+            </Center>
+          )}
+            
+          {/* placeholder for user sign-in. Routing handled after POC finished */}
+          {userData ? (
+            <ChatInterface 
+              userData={userData} 
+              onLogout={logout}
+            />
+          ) : (
+            loginOptions()
+          )}
+        </>
+      )}
     </div>
   )
   

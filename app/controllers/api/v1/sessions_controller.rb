@@ -15,6 +15,14 @@ class Api::V1::SessionsController < ApplicationController
     end
   end
 
+  def show
+    if current_user
+      render json: serialize_user(current_user), status: :ok
+    else
+      render json: { error: "Not authenticated" }, status: :unauthorized
+    end
+  end
+
   def destroy
     session.delete(:user_id)
     head :no_content

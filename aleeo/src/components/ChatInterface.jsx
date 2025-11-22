@@ -31,7 +31,7 @@ import { createConversation, createMessage, deleteConversation, renameConversati
 // }s
 
 function ChatInterface(props) {
-    const { userData } = props;
+    const { userData, onLogout } = props;
 
     const [currentChat, setCurrentChat] = React.useState(userData?.conversations ? userData.conversations[0] : null);
     const [newMessage, setNewMessage] = React.useState("");
@@ -160,36 +160,46 @@ function ChatInterface(props) {
           {/* conversations side bar */}
             <HStack
               alignItems="center"
-              justifyContent="center"
+              justifyContent="space-between"
               width="100%"
               paddingTop={'1rem'}
               paddingBottom={'1rem'}
               flexWrap="wrap"
               style={{ flexShrink: 0 }}
             >
-              <Heading
-                size="md"
-                m={0}
-                display="flex"
-                alignItems="center"
-                whiteSpace="normal" // <-- allow wrapping
-                wordBreak="break-word" // <-- break long words
+              <HStack alignItems="center">
+                <Heading
+                  size="md"
+                  m={0}
+                  display="flex"
+                  alignItems="center"
+                  whiteSpace="normal" // <-- allow wrapping
+                  wordBreak="break-word" // <-- break long words
+                >
+                  Conversations
+                </Heading>
+                <IconButton
+                  aria-label="add-conversation"
+                  rounded="full"
+                  size={"2xs"}
+                  colorPalette={"purple"}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  mt={1}
+                  onClick={handleAddConversation}
+                >
+                  <FaPlusCircle />
+                </IconButton>
+              </HStack>
+              <Button
+                size="xs"
+                variant="outline"
+                colorPalette="red"
+                onClick={onLogout}
               >
-                Conversations
-              </Heading>
-              <IconButton
-                aria-label="add-conversation"
-                rounded="full"
-                size={"2xs"}
-                colorPalette={"purple"}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                mt={1}
-                onClick={handleAddConversation}
-              >
-                <FaPlusCircle />
-              </IconButton>
+                Logout
+              </Button>
             </HStack>
             <Box width="100%" display="flex" justifyContent="center" style={{ flexShrink: 0 }}>
               <Separator size={'lg'} width="80%" mx="auto" />

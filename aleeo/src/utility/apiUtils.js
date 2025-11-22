@@ -13,6 +13,32 @@ export const userLogin = async (params) => {
   }
 };
 
+export const checkCurrentUser = async () => {
+  try {
+    const response = await apiClient.get('/me', {
+      withCredentials: true,
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response.data;
+  } catch (error) {
+    console.log('No current user session');
+    return null;
+  }
+};
+
+export const logout = async () => {
+  try {
+    await apiClient.delete('/logout', {
+      withCredentials: true,
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return true;
+  } catch (error) {
+    console.error('Logout failed:', error);
+    return false;
+  }
+};
+
 export const createConversation = async (params) => {
   try {
     const response = await apiClient.post('/conversations', params)
