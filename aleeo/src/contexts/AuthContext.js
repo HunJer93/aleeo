@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     loading,
-    isAuthenticated: !!userData
+    isAuthenticated: !!userData && !loading // More robust check
   };
 
   return (

@@ -7,7 +7,7 @@ import logo  from '../assets/aleeo_logo.png';
 
 function UserLogin(props) {
 
-  const { userData, login, logout, loading, _isAuthenticated } = useAuth();
+  const { userData, login, logout, loading, isAuthenticated } = useAuth();
   
   const [newUser, setNewUser] = useState(false);
   const [userSignIn, setUserSignIn] = useState({
@@ -22,6 +22,7 @@ function UserLogin(props) {
     password: '',
     confirm_password: ''
   });
+  const [errors, setErrors] = useState({});
 
 
   const handleSignin = async (error) => {
@@ -33,18 +34,48 @@ function UserLogin(props) {
   };
 
   const handleCreateUser = async (error) => {
+    error.preventDefault();
+    
+    // Validate form first
+    if (!validateForm()) {
+      return; // Stop execution if validation fails
+    }
+    
     try {
       const data = await createNewUser(newUserInfo);
       if (data) {
-        login(data); // Log in the new user after creation
+        login(data);
         setNewUser(false);
+        // Clear form and errors on success
+        setNewUserInfo({
+          first_name: '',
+          last_name: '',
+          username: '',
+          password: '',
+          confirm_password: ''
+        });
+        setErrors({});
       }
     } catch (error) {
       alert("User creation failed!");
       console.error('User creation failed:', error);
     }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
     
-    error.preventDefault();
+    if (!newUserInfo.first_name.trim()) newErrors.first_name = "First name is required";
+    if (!newUserInfo.last_name.trim()) newErrors.last_name = "Last name is required";
+    if (!newUserInfo.username.trim()) newErrors.username = "Email is required";
+    if (!newUserInfo.password) newErrors.password = "Password is required";
+    if (newUserInfo.password.length < 8) newErrors.password = "Password must be at least 8 characters long";
+    if (newUserInfo.password !== newUserInfo.confirm_password) {
+      newErrors.confirm_password = "Passwords do not match";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const loginOptions = () => {
@@ -75,6 +106,7 @@ function UserLogin(props) {
             <Field.RequiredIndicator />
           </Field.Label>
           <Input
+            type="password"  // Add this for password security
             value={userSignIn?.password}
             placeholder='Password' 
             flex="1"
@@ -100,7 +132,7 @@ function UserLogin(props) {
     <Center css={{"padding-top" : "2rem" }}>
       <Stack gap="8" maxW="sm" css={{ "--field-label-width": "96px" }}>
         <h1>Create Account</h1>
-        <Field.Root orientation={"horizontal"} required>
+        <Field.Root orientation={"horizontal"} required invalid={!!errors.first_name}>
           <Field.Label>
             First Name
             <Field.RequiredIndicator />
@@ -110,10 +142,11 @@ function UserLogin(props) {
             placeholder='First name' 
             flex="1"
             onChange={(e) => setNewUserInfo({...newUserInfo, first_name: e.target.value})}  
-            />
+          />
+          {errors.first_name && <Field.ErrorText>{errors.first_name}</Field.ErrorText>}
         </Field.Root>
 
-        <Field.Root orientation={"horizontal"} required>
+        <Field.Root orientation={"horizontal"} required invalid={!!errors.last_name}>
           <Field.Label>
             Last Name
             <Field.RequiredIndicator />
@@ -123,10 +156,11 @@ function UserLogin(props) {
             placeholder='Last Name' 
             flex="1"
             onChange={(e) => setNewUserInfo({...newUserInfo, last_name: e.target.value})}   
-            />
+          />
+          {errors.last_name && <Field.ErrorText>{errors.last_name}</Field.ErrorText>}
         </Field.Root>
 
-        <Field.Root orientation={"horizontal"} required>
+        <Field.Root orientation={"horizontal"} required invalid={!!errors.username}>
           <Field.Label>
             Email
             <Field.RequiredIndicator />
@@ -136,33 +170,38 @@ function UserLogin(props) {
             placeholder='Email' 
             flex="1"
             onChange={(e) => setNewUserInfo({...newUserInfo, username: e.target.value})}   
-            />
+          />
+          {errors.username && <Field.ErrorText>{errors.username}</Field.ErrorText>}
         </Field.Root>
 
-        <Field.Root orientation={"horizontal"} required>
+        <Field.Root orientation={"horizontal"} required invalid={!!errors.password}>
           <Field.Label>
             Password
             <Field.RequiredIndicator />
           </Field.Label>
           <Input
+            type="password"
             value={newUserInfo?.password}
             placeholder='Password' 
             flex="1"
             onChange={(e) => setNewUserInfo({...newUserInfo, password: e.target.value})}  
           />
+          {errors.password && <Field.ErrorText>{errors.password}</Field.ErrorText>}
         </Field.Root>
 
-        <Field.Root orientation={"horizontal"} required>
+        <Field.Root orientation={"horizontal"} required invalid={!!errors.confirm_password}>
           <Field.Label>
             Confirm Password
             <Field.RequiredIndicator />
           </Field.Label>
           <Input 
+            type="password"
             value={newUserInfo?.confirm_password}
             placeholder='Password' 
             flex="1"
             onChange={(e) => setNewUserInfo({...newUserInfo, confirm_password: e.target.value})}  
-            />
+          />
+          {errors.confirm_password && <Field.ErrorText>{errors.confirm_password}</Field.ErrorText>}
         </Field.Root>
           <Button colorPalette={"blue"} variant="surface" onClick={handleCreateUser}>
             Create Account
@@ -186,20 +225,19 @@ function UserLogin(props) {
       
       {!loading && (
         <>
-          {!userData && (
-            <Center>
-              <img src={logo} alt="Aleeo Logo" width="100" height="100"/>
-            </Center>
-          )}
-            
-          {/* placeholder for user sign-in. Routing handled after POC finished */}
-          {userData ? (
+          {isAuthenticated ? (
             <ChatInterface 
               userData={userData} 
               onLogout={logout}
             />
           ) : (
             loginOptions()
+          )}
+
+          {!isAuthenticated && (
+            <Center>
+              <img src={logo} alt="Aleeo Logo" width="100" height="100"/>
+            </Center>
           )}
         </>
       )}
