@@ -4,8 +4,8 @@ class Api::V1::SessionsController < ApplicationController
     if user
       # add session storage in future
       if params[:remember_me]
-        # WIP session storage
-        cookies.permanent[:remember_token] = user.remember_token
+        # WIP session storage - skip for now since remember_token is not implemented
+        # cookies.permanent[:remember_token] = user.remember_token
       else
         session[:user_id] = user.id
       end
