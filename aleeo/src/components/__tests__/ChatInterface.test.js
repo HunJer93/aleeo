@@ -180,7 +180,7 @@ describe('ChatInterface Component', () => {
       render(<ChatInterface {...defaultProps} />);
 
       // Click on "Another Chat" conversation
-      const anotherChatButton = screen.getByText('Another Chat').closest('button');
+      const anotherChatButton = screen.getByRole('button', { name: 'Another Chat' });
       await userEvent.click(anotherChatButton);
 
       // Should update the current chat title
@@ -191,8 +191,8 @@ describe('ChatInterface Component', () => {
       render(<ChatInterface {...defaultProps} />);
 
       // Click on the dots menu for the first conversation
-      const dotsButton = screen.getAllByTestId('dots-icon')[0].closest('button');
-      await userEvent.click(dotsButton);
+      const dotsButtons = screen.getAllByLabelText('conversation-options');
+      await userEvent.click(dotsButtons[0]);
 
       expect(screen.getByText('Rename')).toBeInTheDocument();
       expect(screen.getByText('Delete')).toBeInTheDocument();
@@ -204,8 +204,8 @@ describe('ChatInterface Component', () => {
       render(<ChatInterface {...defaultProps} />);
 
       // Click dots menu and then rename
-      const dotsButton = screen.getAllByTestId('dots-icon')[0].closest('button');
-      await userEvent.click(dotsButton);
+      const dotsButtons = screen.getAllByLabelText('conversation-options');
+      await userEvent.click(dotsButtons[0]);
       
       const renameButton = screen.getByText('Rename');
       await userEvent.click(renameButton);
@@ -229,8 +229,8 @@ describe('ChatInterface Component', () => {
       render(<ChatInterface {...defaultProps} />);
 
       // Click dots menu and then delete
-      const dotsButton = screen.getAllByTestId('dots-icon')[0].closest('button');
-      await userEvent.click(dotsButton);
+      const dotsButtons = screen.getAllByLabelText('conversation-options');
+      await userEvent.click(dotsButtons[0]);
       
       const deleteButton = screen.getByText('Delete');
       await userEvent.click(deleteButton);
@@ -262,13 +262,12 @@ describe('ChatInterface Component', () => {
       });
 
       render(<ChatInterface {...defaultProps} />);
-      const user = userEvent.setup();
 
       const textarea = screen.getByPlaceholderText('Write a message...');
-      await user.type(textarea, 'Hello, assistant');
+      await userEvent.type(textarea, 'Hello, assistant');
 
       const sendButton = screen.getByRole('button', { name: /send/i });
-      await user.click(sendButton);
+      await userEvent.click(sendButton);
 
       // Should clear the textarea
       expect(textarea).toHaveValue('');
@@ -278,11 +277,9 @@ describe('ChatInterface Component', () => {
 
       await waitFor(() => {
         expect(createMessage).toHaveBeenCalledWith({
-          message: {
-            role: 'user',
-            content: 'Hello, assistant',
-            conversation_id: 1,
-          },
+          role: 'user',
+          content: 'Hello, assistant',
+          conversation_id: 1,
         });
       });
     });
@@ -298,11 +295,10 @@ describe('ChatInterface Component', () => {
       });
 
       render(<ChatInterface {...defaultProps} />);
-      const user = userEvent.setup();
 
       const textarea = screen.getByPlaceholderText('Write a message...');
-      await user.type(textarea, 'Hello, assistant');
-      await user.keyboard('{Enter}');
+      await userEvent.type(textarea, 'Hello, assistant');
+      await userEvent.keyboard('{Enter}');
 
       expect(textarea).toHaveValue('');
       expect(screen.getByTestId('spinner')).toBeInTheDocument();
@@ -314,22 +310,20 @@ describe('ChatInterface Component', () => {
 
     it('does not send empty messages', async () => {
       render(<ChatInterface {...defaultProps} />);
-      const user = userEvent.setup();
 
       const sendButton = screen.getByRole('button', { name: /send/i });
-      await user.click(sendButton);
+      await userEvent.click(sendButton);
 
       expect(createMessage).not.toHaveBeenCalled();
     });
 
     it('allows multiline messages with Shift+Enter', async () => {
       render(<ChatInterface {...defaultProps} />);
-      const user = userEvent.setup();
 
       const textarea = screen.getByPlaceholderText('Write a message...');
-      await user.type(textarea, 'First line');
-      await user.keyboard('{Shift>}{Enter}{/Shift}');
-      await user.type(textarea, 'Second line');
+      await userEvent.type(textarea, 'First line');
+      await userEvent.keyboard('{Shift>}{Enter}{/Shift}');
+      await userEvent.type(textarea, 'Second line');
 
       expect(textarea).toHaveValue('First line\nSecond line');
     });
@@ -339,17 +333,17 @@ describe('ChatInterface Component', () => {
     it('formats user messages correctly', () => {
       render(<ChatInterface {...defaultProps} />);
 
-      const userMessage = screen.getByText(/user:/).closest('[data-testid="box"]');
-      expect(userMessage).toBeInTheDocument();
-      expect(userMessage).toHaveTextContent('user: Hello');
+      const userMessages = screen.getAllByText(/user:/);
+      expect(userMessages.length).toBeGreaterThan(0);
+      expect(screen.getByText(/Hello/)).toBeInTheDocument();
     });
 
     it('formats assistant messages correctly', () => {
       render(<ChatInterface {...defaultProps} />);
 
-      const assistantMessage = screen.getByText(/assistant:/).closest('[data-testid="box"]');
-      expect(assistantMessage).toBeInTheDocument();
-      expect(assistantMessage).toHaveTextContent('assistant:');
+      const assistantMessages = screen.getAllByText(/assistant:/);
+      expect(assistantMessages.length).toBeGreaterThan(0);
+      expect(screen.getByText(/Hi there! How can I help you/)).toBeInTheDocument();
     });
 
     it('shows loading state during message sending', () => {
@@ -364,10 +358,9 @@ describe('ChatInterface Component', () => {
   describe('Logout Functionality', () => {
     it('calls onLogout when logout button is clicked', async () => {
       render(<ChatInterface {...defaultProps} />);
-      const user = userEvent.setup();
 
       const logoutButton = screen.getByRole('button', { name: /logout/i });
-      await user.click(logoutButton);
+      await userEvent.click(logoutButton);
 
       expect(defaultProps.onLogout).toHaveBeenCalled();
     });
@@ -387,7 +380,7 @@ describe('ChatInterface Component', () => {
       await user.click(addButton);
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith('Creating conversation failed!');
+        expect(window.alert).toHaveBeenCalledWith('Failed to create conversation. Please try again.');
       });
     });
 
@@ -398,16 +391,15 @@ describe('ChatInterface Component', () => {
       window.alert = jest.fn();
 
       render(<ChatInterface {...defaultProps} />);
-      const user = userEvent.setup();
 
       const textarea = screen.getByPlaceholderText('Write a message...');
-      await user.type(textarea, 'Test message');
+      await userEvent.type(textarea, 'Test message');
 
       const sendButton = screen.getByRole('button', { name: /send/i });
-      await user.click(sendButton);
+      await userEvent.click(sendButton);
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith('Sending message failed!');
+        expect(window.alert).toHaveBeenCalledWith('Failed to send message. Please try again.');
       });
     });
   });

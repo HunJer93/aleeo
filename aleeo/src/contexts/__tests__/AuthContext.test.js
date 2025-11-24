@@ -138,8 +138,7 @@ describe('AuthContext', () => {
         expect(screen.getByTestId('loading')).toHaveTextContent('false');
       });
 
-      const user = userEvent.setup();
-      await user.click(screen.getByTestId('login-btn'));
+      await userEvent.click(screen.getByTestId('login-btn'));
 
       expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
       expect(screen.getByTestId('user-data')).toHaveTextContent(JSON.stringify({ id: 1, name: 'Test' }));
@@ -147,7 +146,6 @@ describe('AuthContext', () => {
     });
 
     it('allows user to logout', async () => {
-      const user = userEvent.setup();
       const storedUser = { id: 1, firstName: 'John' };
       localStorage.setItem('userData', JSON.stringify(storedUser));
       checkCurrentUser.mockResolvedValue(storedUser);
@@ -161,7 +159,7 @@ describe('AuthContext', () => {
 
       expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
 
-      await user.click(screen.getByTestId('logout-btn'));
+      await userEvent.click(screen.getByTestId('logout-btn'));
 
       await waitFor(() => {
         expect(apiLogout).toHaveBeenCalled();
@@ -173,7 +171,6 @@ describe('AuthContext', () => {
     });
 
     it('handles logout API error gracefully', async () => {
-      const user = userEvent.setup();
       const storedUser = { id: 1, firstName: 'John' };
       localStorage.setItem('userData', JSON.stringify(storedUser));
       checkCurrentUser.mockResolvedValue(storedUser);
@@ -188,7 +185,7 @@ describe('AuthContext', () => {
         expect(screen.getByTestId('loading')).toHaveTextContent('false');
       });
 
-      await user.click(screen.getByTestId('logout-btn'));
+      await userEvent.click(screen.getByTestId('logout-btn'));
 
       await waitFor(() => {
         expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
@@ -216,8 +213,7 @@ describe('AuthContext', () => {
       expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
 
       // True after login
-      const user = userEvent.setup();
-      await user.click(screen.getByTestId('login-btn'));
+      await userEvent.click(screen.getByTestId('login-btn'));
       expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
     });
   });

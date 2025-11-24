@@ -99,13 +99,12 @@ describe('UserLogin Component', () => {
 
     it('allows user to input username and password', async () => {
       renderWithAuthContext();
-      const user = userEvent.setup();
 
       const usernameInput = screen.getByPlaceholderText('Username');
       const passwordInput = screen.getByPlaceholderText('Password');
 
-      await user.type(usernameInput, 'testuser');
-      await user.type(passwordInput, 'testpassword');
+      await userEvent.type(usernameInput, 'testuser');
+      await userEvent.type(passwordInput, 'testpassword');
 
       expect(usernameInput).toHaveValue('testuser');
       expect(passwordInput).toHaveValue('testpassword');
@@ -116,11 +115,10 @@ describe('UserLogin Component', () => {
       userLogin.mockResolvedValue(mockUserData);
       
       renderWithAuthContext();
-      const user = userEvent.setup();
 
-      await user.type(screen.getByPlaceholderText('Username'), 'testuser');
-      await user.type(screen.getByPlaceholderText('Password'), 'testpassword');
-      await user.click(screen.getByRole('button', { name: /sign in/i }));
+      await userEvent.type(screen.getByPlaceholderText('Username'), 'testuser');
+      await userEvent.type(screen.getByPlaceholderText('Password'), 'testpassword');
+      await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
       await waitFor(() => {
         expect(userLogin).toHaveBeenCalledWith({
@@ -135,9 +133,8 @@ describe('UserLogin Component', () => {
 
     it('switches to create account form when Create Account link is clicked', async () => {
       renderWithAuthContext();
-      const user = userEvent.setup();
 
-      await user.click(screen.getByText('Create Account'));
+      await userEvent.click(screen.getByText('Create Account'));
 
       expect(screen.getByText('Create Account')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('First name')).toBeInTheDocument();
@@ -149,9 +146,7 @@ describe('UserLogin Component', () => {
   describe('Create Account Form', () => {
     const setupCreateAccountForm = async () => {
       renderWithAuthContext();
-      const user = userEvent.setup();
-      await user.click(screen.getByText('Create Account'));
-      return user;
+      await userEvent.click(screen.getByText('Create Account'));
     };
 
     it('renders create account form with all fields', async () => {
@@ -165,15 +160,15 @@ describe('UserLogin Component', () => {
     });
 
     it('allows user to input all required fields', async () => {
-      const user = await setupCreateAccountForm();
+      await setupCreateAccountForm();
 
-      await user.type(screen.getByPlaceholderText('First name'), 'John');
-      await user.type(screen.getByPlaceholderText('Last Name'), 'Doe');
-      await user.type(screen.getByPlaceholderText('Email'), 'john@example.com');
+      await userEvent.type(screen.getByPlaceholderText('First name'), 'John');
+      await userEvent.type(screen.getByPlaceholderText('Last Name'), 'Doe');
+      await userEvent.type(screen.getByPlaceholderText('Email'), 'john@example.com');
       
       const passwordInputs = screen.getAllByPlaceholderText('Password');
-      await user.type(passwordInputs[0], 'password123');
-      await user.type(passwordInputs[1], 'password123');
+      await userEvent.type(passwordInputs[0], 'password123');
+      await userEvent.type(passwordInputs[1], 'password123');
 
       expect(screen.getByPlaceholderText('First name')).toHaveValue('John');
       expect(screen.getByPlaceholderText('Last Name')).toHaveValue('Doe');
@@ -183,9 +178,9 @@ describe('UserLogin Component', () => {
     });
 
     it('validates required fields and shows errors', async () => {
-      const user = await setupCreateAccountForm();
+      await setupCreateAccountForm();
 
-      await user.click(screen.getByRole('button', { name: /create account/i }));
+      await userEvent.click(screen.getByRole('button', { name: /create account/i }));
 
       await waitFor(() => {
         expect(screen.getByText('First name is required')).toBeInTheDocument();
@@ -197,16 +192,16 @@ describe('UserLogin Component', () => {
     });
 
     it('validates password length', async () => {
-      const user = await setupCreateAccountForm();
+      await setupCreateAccountForm();
 
-      await user.type(screen.getByPlaceholderText('First name'), 'John');
-      await user.type(screen.getByPlaceholderText('Last Name'), 'Doe');
-      await user.type(screen.getByPlaceholderText('Email'), 'john@example.com');
+      await userEvent.type(screen.getByPlaceholderText('First name'), 'John');
+      await userEvent.type(screen.getByPlaceholderText('Last Name'), 'Doe');
+      await userEvent.type(screen.getByPlaceholderText('Email'), 'john@example.com');
       
       const passwordInputs = screen.getAllByPlaceholderText('Password');
-      await user.type(passwordInputs[0], '123');
+      await userEvent.type(passwordInputs[0], '123');
 
-      await user.click(screen.getByRole('button', { name: /create account/i }));
+      await userEvent.click(screen.getByRole('button', { name: /create account/i }));
 
       await waitFor(() => {
         expect(screen.getByText('Password must be at least 8 characters long')).toBeInTheDocument();
@@ -214,17 +209,17 @@ describe('UserLogin Component', () => {
     });
 
     it('validates password confirmation match', async () => {
-      const user = await setupCreateAccountForm();
+      await setupCreateAccountForm();
 
-      await user.type(screen.getByPlaceholderText('First name'), 'John');
-      await user.type(screen.getByPlaceholderText('Last Name'), 'Doe');
-      await user.type(screen.getByPlaceholderText('Email'), 'john@example.com');
+      await userEvent.type(screen.getByPlaceholderText('First name'), 'John');
+      await userEvent.type(screen.getByPlaceholderText('Last Name'), 'Doe');
+      await userEvent.type(screen.getByPlaceholderText('Email'), 'john@example.com');
       
       const passwordInputs = screen.getAllByPlaceholderText('Password');
-      await user.type(passwordInputs[0], 'password123');
-      await user.type(passwordInputs[1], 'different123');
+      await userEvent.type(passwordInputs[0], 'password123');
+      await userEvent.type(passwordInputs[1], 'different123');
 
-      await user.click(screen.getByRole('button', { name: /create account/i }));
+      await userEvent.click(screen.getByRole('button', { name: /create account/i }));
 
       await waitFor(() => {
         expect(screen.getByText('Passwords do not match')).toBeInTheDocument();
@@ -235,17 +230,17 @@ describe('UserLogin Component', () => {
       const mockUserData = { id: 1, username: 'john@example.com' };
       createNewUser.mockResolvedValue(mockUserData);
       
-      const user = await setupCreateAccountForm();
+      await setupCreateAccountForm();
 
-      await user.type(screen.getByPlaceholderText('First name'), 'John');
-      await user.type(screen.getByPlaceholderText('Last Name'), 'Doe');
-      await user.type(screen.getByPlaceholderText('Email'), 'john@example.com');
+      await userEvent.type(screen.getByPlaceholderText('First name'), 'John');
+      await userEvent.type(screen.getByPlaceholderText('Last Name'), 'Doe');
+      await userEvent.type(screen.getByPlaceholderText('Email'), 'john@example.com');
       
       const passwordInputs = screen.getAllByPlaceholderText('Password');
-      await user.type(passwordInputs[0], 'password123');
-      await user.type(passwordInputs[1], 'password123');
+      await userEvent.type(passwordInputs[0], 'password123');
+      await userEvent.type(passwordInputs[1], 'password123');
 
-      await user.click(screen.getByRole('button', { name: /create account/i }));
+      await userEvent.click(screen.getByRole('button', { name: /create account/i }));
 
       await waitFor(() => {
         expect(createNewUser).toHaveBeenCalledWith({
@@ -261,9 +256,9 @@ describe('UserLogin Component', () => {
     });
 
     it('switches back to sign in form when Back to Sign In link is clicked', async () => {
-      const user = await setupCreateAccountForm();
+      await setupCreateAccountForm();
 
-      await user.click(screen.getByText('Back to Sign In'));
+      await userEvent.click(screen.getByText('Back to Sign In'));
 
       expect(screen.getByPlaceholderText('Username')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
