@@ -165,7 +165,10 @@ describe('AuthContext', () => {
         expect(apiLogout).toHaveBeenCalled();
       });
 
-      expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
+      await waitFor(() => {
+        expect(screen.getByTestId('authenticated')).toHaveTextContent('false');
+      });
+
       expect(screen.getByTestId('user-data')).toHaveTextContent('null');
       expect(localStorage.getItem('userData')).toBeNull();
     });
