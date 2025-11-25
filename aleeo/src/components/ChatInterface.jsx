@@ -504,10 +504,8 @@ function ChatInterface(props) {
   return (
     <div>
         {chatBuilder(userData?.conversations)}
-    {console.log("User Data in Chat Interface: ", JSON.stringify(userData, 1, 1))}
     </div>
-    
-  )
+  );
 }
 
 export default ChatInterface

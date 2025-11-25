@@ -41,8 +41,8 @@ require "httparty"
 # Refer to OpenAI API documentation for more details: https://platform.openai.com/docs/api-reference/chat/create
 
 class OpenaiClient
-    include HTTParty
-    BASE_URL = "https://api.openai.com/v1".freeze
+  include HTTParty
+  BASE_URL = "https://api.openai.com/v1".freeze
 
   def initialize
     ENV["OPENAI_API_KEY"] ||= Rails.application.credentials.dig(:openai, :api_key)
@@ -51,16 +51,23 @@ class OpenaiClient
 
 
   def chat(messages)
-    response = HTTParty.post(
-      "#{BASE_URL}/chat/completions",
-      headers: headers,
-      body: {
-        model: "gpt-4o-mini",
-        messages: messages
-      }.to_json
-    )
+    begin
+      response = HTTParty.post(
+            "#{BASE_URL}/chat/completions",
+            headers: headers,
+            body: {
+              model: "gpt-4o-mini",
+              messages: messages
+            }.to_json
+          )
+      if response.code == 200
+        unpack_message_response(response)
+      end
 
-    unpack_message_response(response)
+    rescue => e
+      Rails.logger.error("OpenAI API error: #{e.message}")
+      "Sorry, I'm having trouble responding right now."
+    end
   end
 
   private
@@ -73,6 +80,17 @@ class OpenaiClient
   end
 
   def unpack_message_response(response)
-    JSON.parse(response.body)["choices"][0]["message"]["content"]
+    parsed = JSON.parse(response.body) rescue nil
+
+    unless parsed.is_a?(Hash) && parsed["choices"].is_a?(Array) && parsed["choices"].any?
+      raise "Unexpected response format: missing or invalid 'choices' field"
+    end
+    message = parsed["choices"][0]["message"] rescue nil
+
+    unless message.is_a?(Hash) && message.key?("content")
+      raise "Unexpected response format: missing or invalid 'message' or 'content' key"
+    end
+
+    message["content"]
   end
 end

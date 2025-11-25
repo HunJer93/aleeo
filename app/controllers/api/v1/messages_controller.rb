@@ -30,7 +30,7 @@ class Api::V1::MessagesController < ApplicationController
         assistant_message: MessageSerializer.new(@assistant_message).serializable_hash[:data][:attributes]
       }, status: :created
     else
-      render json: @message.errors, status: :unprocessable_entity
+      render json: @message.errors, status: :unprocessable_content
     end
   end
 
@@ -39,7 +39,7 @@ class Api::V1::MessagesController < ApplicationController
     if @message.update(message_params)
       render json: @message
     else
-      render json: @message.errors, status: :unprocessable_entity
+      render json: @message.errors, status: :unprocessable_content
     end
   end
 

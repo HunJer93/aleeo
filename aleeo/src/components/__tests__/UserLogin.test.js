@@ -30,20 +30,11 @@ const { userLogin, createNewUser } = require('../../utility/apiUtils');
 
 describe('UserLogin Component', () => {
   const mockLogin = jest.fn();
-  const mockLogout = jest.fn();
 
   const renderWithAuthContext = (authValues = {}) => {
-    const defaultAuthValues = {
-      userData: null,
-      login: mockLogin,
-      logout: mockLogout,
-      loading: false,
-      isAuthenticated: false,
-      ...authValues,
-    };
 
     return render(
-      <AuthContext.Provider value={defaultAuthValues}>
+      <AuthContext.Provider>
         <UserLogin />
       </AuthContext.Provider>
     );
