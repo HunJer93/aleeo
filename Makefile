@@ -5,6 +5,9 @@ setup:
 test:
 	bundle exec rspec
 
+e2e-test:
+	./bin/e2e_test
+
 run-backend:
 	rails s
 

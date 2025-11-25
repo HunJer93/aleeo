@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# E2E Test Runner Script
+# This script starts both the Rails backend and React frontend, then runs Cucumber tests
+
+set -e  # Exit on any error
+
+echo "Starting E2E Test Environment..."
+
+# Set test environment
+export RAILS_ENV=test
+
+# Prepare test database
+echo "Setting up test database..."
+cd /home/jhunton22/github/aleeo
+bundle exec rails db:test:prepare
+
+# Kill any existing servers on our ports
+echo "Cleaning up any existing servers..."
+pkill -f "rails s" || true
+pkill -f "react-scripts start" || true
+sleep 2
+
+# Start Rails backend in the background
+echo "Starting Rails backend on port 3000..."
+cd /home/jhunton22/github/aleeo
+bundle exec rails server -p 3000 -e test &
+RAILS_PID=$!
+
+# Wait for Rails to start
+echo "Waiting for Rails backend to start..."
+sleep 10
+
+# Start React frontend in the background  
+echo "Starting React frontend on port 3001..."
+cd /home/jhunton22/github/aleeo/aleeo
+PORT=3001 npm start &
+REACT_PID=$!
+
+# Wait for React to start
+echo "Waiting for React frontend to start..."
+sleep 15
+
+# Function to cleanup processes on exit
+cleanup() {
+    echo "Cleaning up processes..."
+    kill $RAILS_PID 2>/dev/null || true
+    kill $REACT_PID 2>/dev/null || true
+    pkill -f "rails s" || true
+    pkill -f "react-scripts start" || true
+    exit $1
+}
+
+# Setup trap to cleanup on script exit
+trap 'cleanup $?' EXIT
+
+# Verify servers are running
+echo "Checking if servers are responding..."
+if ! curl -f http://localhost:3000/up > /dev/null 2>&1; then
+    echo "ERROR: Rails backend is not responding on port 3000"
+    exit 1
+fi
+
+if ! curl -f http://localhost:3001 > /dev/null 2>&1; then
+    echo "ERROR: React frontend is not responding on port 3001"  
+    exit 1
+fi
+
+echo "Both servers are running. Starting Cucumber tests..."
+
+# Run Cucumber tests
+cd /home/jhunton22/github/aleeo
+bundle exec cucumber -p e2e
+
+echo "E2E tests completed!"

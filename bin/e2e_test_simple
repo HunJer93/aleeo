@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Simple E2E Test Runner
+# This script assumes both servers are already running
+
+set -e  # Exit on any error
+
+echo "Running E2E Tests..."
+
+# Set test environment
+export RAILS_ENV=test
+
+# Prepare test database
+echo "Setting up test database..."
+cd /home/jhunton22/github/aleeo
+bundle exec rails db:test:prepare
+
+# Check if servers are running
+echo "Checking if servers are responding..."
+if ! curl -f http://localhost:3000/up > /dev/null 2>&1; then
+    echo "WARNING: Rails backend is not responding on port 3000"
+    echo "Please start the Rails server with: rails s"
+fi
+
+if ! curl -f http://localhost:3001 > /dev/null 2>&1; then
+    echo "WARNING: React frontend is not responding on port 3001"  
+    echo "Please start the React server with: cd aleeo && npm start"
+fi
+
+echo "Running Cucumber E2E tests..."
+
+# Run Cucumber tests
+cd /home/jhunton22/github/aleeo
+bundle exec cucumber -p e2e
+
+echo "E2E tests completed!"

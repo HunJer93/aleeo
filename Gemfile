@@ -56,6 +56,10 @@ end
 
 group :test do
   gem "database_cleaner-active_record", "~> 2.0"
+  gem "cucumber-rails", "~> 3.0", require: false
+  gem "selenium-webdriver", "~> 4.15"
+  gem "capybara", "~> 3.39"
+  gem "rspec-expectations", "~> 3.12"
 end
 
 gem "bcrypt", "~> 3.1"
