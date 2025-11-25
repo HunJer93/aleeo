@@ -71,9 +71,9 @@ module TestHelpers
     # Wait for the page to load
     expect(page).to have_button('Sign in', wait: 10)
 
-    # Fill in sign in form
-    fill_in 'Username', with: email
-    fill_in 'Password', with: password
+    # Fill in sign in form using placeholders (not labels)
+    find('input[placeholder="Username"]').set(email)
+    find('input[placeholder="Password"]').set(password)
 
     # Handle any alerts that might appear before clicking
     begin
@@ -89,17 +89,20 @@ module TestHelpers
 
     # Handle any alerts that appear after clicking
     begin
+      sleep(1) # Give time for potential alert to appear
       alert = page.driver.browser.switch_to.alert
       if alert
+        alert_text = alert.text
+        puts "Alert appeared during sign-in: #{alert_text}"
         alert.accept
-        # If login failed, we may get redirected back to login page
-        expect(page).to have_button('Sign in')
-        return false # Indicate login failure
+        # If login failed, return failure
+        return false
       end
     rescue Selenium::WebDriver::Error::NoSuchAlertError
-      # No alert present, continue
-    rescue => _e
-      # Continue if no alert or alert handling fails
+      # No alert present - this is good, continue normally
+    rescue => e
+      puts "Alert handling error during sign-in: #{e.message}"
+      # Continue if alert handling fails
     end
 
     # Wait for successful login and redirect to chat interface
@@ -124,30 +127,37 @@ module TestHelpers
     # Wait for form to appear
     expect(page).to have_content('Create Account')
 
-    # Fill in registration form
-    fill_in 'First Name', with: first_name
-    fill_in 'Last Name', with: last_name
-    fill_in 'Email', with: email
+    # Fill in registration form using placeholders
+    find('input[placeholder="First name"]').set(first_name)
+    find('input[placeholder="Last Name"]').set(last_name)
+    find('input[placeholder="Email"]').set(email)
 
-    # Fill in password fields (need to be specific since there are two)
+    # Fill in password fields safely
     password_fields = all('input[type="password"]')
-    password_fields[0].set(password)  # Password field
-    password_fields[1].set(password)  # Confirm password field
+    if password_fields.length >= 2
+      password_fields[0].set(password)  # Password field
+      password_fields[1].set(password)  # Confirm password field
+    else
+      raise "Expected 2 password fields, found #{password_fields.length}"
+    end
 
     click_button 'Create Account'
 
     # Handle any alerts that appear after clicking
     begin
+      sleep(1) # Give time for potential alert to appear
       alert = page.driver.browser.switch_to.alert
       if alert
+        alert_text = alert.text
+        puts "Alert appeared during registration: #{alert_text}"
         alert.accept
-        # If account creation failed alert appeared, return to indicate failure
-        expect(page).to have_content('Create Account', wait: 5)
+        # If account creation failed, return failure
         return false
       end
     rescue Selenium::WebDriver::Error::NoSuchAlertError
-      # No alert, continue normally
-    rescue => _e
+      # No alert present - this is good, continue normally
+    rescue => e
+      puts "Alert handling error: #{e.message}"
       # Continue if alert handling fails
     end
 

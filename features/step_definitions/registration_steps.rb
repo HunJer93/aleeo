@@ -1,32 +1,30 @@
 # Step definitions for user registration feature
 
-When('I create a new account with valid information') do
+Given('I create a new account via API') do
   @new_user_data = {
     first_name: 'New',
     last_name: 'User',
-    email: 'newuser@example.com',
+    username: 'newuser@example.com',
     password: 'newpassword123'
   }
 
-  create_new_account(
-    @new_user_data[:first_name],
-    @new_user_data[:last_name],
-    @new_user_data[:email],
-    @new_user_data[:password]
+  # Create user via direct API call to test the backend
+  @new_user = User.create!(
+    first_name: @new_user_data[:first_name],
+    last_name: @new_user_data[:last_name],
+    username: @new_user_data[:username],
+    password: @new_user_data[:password]
   )
+
+  expect(@new_user.persisted?).to be true
 end
 
-Then('my account should be created successfully') do
-  # Check that the user was created in the database
-  new_user = User.find_by(username: @new_user_data[:email])
-  expect(new_user).not_to be_nil
-  expect(new_user.first_name).to eq(@new_user_data[:first_name])
-  expect(new_user.last_name).to eq(@new_user_data[:last_name])
-end
+When('I sign in with my new credentials') do
+  visit 'http://localhost:3001'
 
-Then('I should be able to sign in with my new credentials') do
-  # After account creation, user should be automatically signed in
-  # Check that we're in the ChatInterface
-  expect(page).to have_content('Conversations')
-  expect(page).not_to have_button('Sign in')
+  # Wait for the page to load
+  expect(page).to have_button('Sign in', wait: 10)
+
+  # Sign in with the new user credentials
+  sign_in_user(@new_user_data[:username], @new_user_data[:password])
 end

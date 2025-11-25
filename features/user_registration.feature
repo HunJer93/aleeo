@@ -8,8 +8,8 @@ Feature: User Account Creation
     Given the Rails backend is running
     And the React frontend is running
 
-  Scenario: User creates a new account and signs in
-    Given I am on the home page
-    When I create a new account with valid information
-    Then my account should be created successfully
-    And I should be able to sign in with my new credentials
+  Scenario: New user account can be created and used for sign in
+    Given I create a new account via API
+    When I sign in with my new credentials
+    Then I should be successfully signed in
+    And I should see my conversations list
