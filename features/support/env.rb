@@ -9,6 +9,18 @@ require 'cucumber/rails'
 require 'capybara/cucumber'
 require 'selenium-webdriver'
 
+# Helper method to find Chrome binary
+def which(command)
+  exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : [ '' ]
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exts.each do |ext|
+      exe = File.join(path, "#{command}#{ext}")
+      return exe if File.executable?(exe) && !File.directory?(exe)
+    end
+  end
+  nil
+end
+
 # Use test environment for E2E tests for proper isolation
 ENV['RAILS_ENV'] = 'test'
 
@@ -35,8 +47,15 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   chrome_options.add_argument('--disable-backgrounding-occluded-windows')
   chrome_options.add_argument('--disable-renderer-backgrounding')
 
-  # Use Google Chrome stable
-  chrome_options.binary = '/usr/bin/google-chrome-stable'
+  # Use Google Chrome stable with fallback options
+  # Try multiple possible Chrome binary locations
+  chrome_binary = ENV['GOOGLE_CHROME_BIN'] ||
+                  which('google-chrome-stable') ||
+                  which('google-chrome') ||
+                  which('chromium-browser') ||
+                  '/usr/bin/google-chrome-stable'
+
+  chrome_options.binary = chrome_binary
 
   Capybara::Selenium::Driver.new(
     app,
