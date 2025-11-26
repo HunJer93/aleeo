@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, userEvent } from '../../__tests__/testUtils';
+import { render, screen, waitFor, userEvent } from '../../utils/testUtils';
 import { AuthProvider, useAuth } from '../AuthContext';
 
 // Mock the API utilities

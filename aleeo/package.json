@@ -42,5 +42,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^@ark-ui/react(.*)$": "<rootDir>/src/__mocks__/@ark-ui/react$1.js",
+      "^axios$": "axios/dist/node/axios.cjs"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(axios|@ark-ui|@chakra-ui)/.*)"
+    ]
   }
 }

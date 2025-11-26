@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen, waitFor } from '../../__tests__/testUtils';
+import { render, screen, waitFor } from '../../utils/testUtils';
 import userEvent from '@testing-library/user-event';
 import ChatInterface from '../ChatInterface';
-import { mockUser } from '../../__tests__/testUtils';
+import { mockUser } from '../../utils/testUtils';
 
 // Mock the API utilities
 jest.mock('../../utility/apiUtils', () => ({
@@ -21,83 +21,8 @@ jest.mock('react-icons/hi2', () => ({
   HiDotsHorizontal: () => <div data-testid="dots-icon">...</div>,
 }));
 
-// Mock Chakra UI components that might not be available in test environment
-jest.mock('@chakra-ui/react', () => ({
-  SimpleGrid: ({ children }) => <div data-testid="simple-grid">{children}</div>,
-  GridItem: ({ children }) => <div data-testid="grid-item">{children}</div>,
-  Container: ({ children }) => <div data-testid="container">{children}</div>,
-  HStack: ({ children }) => <div data-testid="hstack">{children}</div>,
-  VStack: ({ children }) => <div data-testid="vstack">{children}</div>,
-  Box: ({ children }) => <div data-testid="box">{children}</div>,
-  Heading: ({ children }) => <h2 data-testid="heading">{children}</h2>,
-  Button: ({ children, onClick, ...props }) => (
-    <button data-testid="button" onClick={onClick} {...props}>
-      {children}
-    </button>
-  ),
-  IconButton: ({ onClick, children, ...props }) => (
-    <button data-testid="icon-button" onClick={onClick} {...props}>
-      {children}
-    </button>
-  ),
-  Textarea: ({ value, onChange, placeholder, onKeyDown }) => (
-    <textarea
-      data-testid="textarea"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      onKeyDown={onKeyDown}
-    />
-  ),
-  Input: ({ value, onChange, placeholder, onBlur, onKeyDown, autoFocus }) => (
-    <input
-      data-testid="input"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      onBlur={onBlur}
-      onKeyDown={onKeyDown}
-      autoFocus={autoFocus}
-    />
-  ),
-  Separator: () => <hr data-testid="separator" />,
-  Spinner: () => <div data-testid="spinner">Loading...</div>,
-  ScrollArea: {
-    Root: ({ children }) => <div data-testid="scroll-root">{children}</div>,
-    Viewport: ({ children }) => <div data-testid="scroll-viewport">{children}</div>,
-    Content: ({ children }) => <div data-testid="scroll-content">{children}</div>,
-    Scrollbar: () => <div data-testid="scrollbar" />,
-    Thumb: () => <div data-testid="scroll-thumb" />,
-    Corner: () => <div data-testid="scroll-corner" />,
-  },
-  Popover: {
-    Root: ({ children, open, onOpenChange }) => (
-      <div data-testid="popover-root" data-open={open}>
-        {children}
-      </div>
-    ),
-    Trigger: ({ children }) => <div data-testid="popover-trigger">{children}</div>,
-    Content: ({ children }) => <div data-testid="popover-content">{children}</div>,
-    Arrow: () => <div data-testid="popover-arrow" />,
-    Positioner: ({ children }) => <div data-testid="popover-positioner">{children}</div>,
-  },
-  Portal: ({ children }) => <div data-testid="portal">{children}</div>,
-  Field: {
-    Root: ({ children }) => <div data-testid="field-root">{children}</div>,
-    Label: ({ children, srOnly }) => (
-      <label data-testid="field-label" style={{ display: srOnly ? 'none' : 'block' }}>
-        {children}
-      </label>
-    ),
-  },
-  For: ({ each, children }) => (
-    <div data-testid="for-loop">
-      {each?.map((item, index) => (
-        <div key={index}>{children(item)}</div>
-      ))}
-    </div>
-  ),
-}));
+// NOTE: Chakra UI mocking is handled globally in setupTests.js
+// This avoids the Ark UI dependency conflicts that were causing test failures
 
 const {
   createConversation,
@@ -114,23 +39,7 @@ describe('ChatInterface Component', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Mock window.alert to prevent JSDOM errors
-    window.alert = jest.fn();
-    
-    // Suppress console.error globally for error handling tests
-    const originalError = console.error;
-    console.error = jest.fn((...args) => {
-      // Only suppress expected error messages
-      const message = args[0];
-      if (typeof message === 'string' && 
-          (message.includes('Error sending message:') || 
-           message.includes('Error creating conversation:') ||
-           message.includes('Failed to create') ||
-           message.includes('Failed to send'))) {
-        return; // Suppress these expected errors
-      }
-      originalError.apply(console, args); // Show other errors
-    });
+    // Mock window.alert is handled globally in setupTests.js
   });
 
   afterEach(() => {
