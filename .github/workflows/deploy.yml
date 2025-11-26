@@ -129,27 +129,8 @@ jobs:
           RAILS_ENV: test
         run: bin/rails db:create db:migrate
 
-      - name: Start Rails backend server
-        env:
-          RAILS_ENV: test
-        run: |
-          bundle exec rails server -p 3000 -d
-          sleep 5
-          echo "Rails server started on port 3000"
-
-      - name: Start React frontend server
-        working-directory: ./aleeo
-        run: |
-          npm start &
-          # Wait for React server to be ready
-          timeout 60 bash -c 'until curl -s http://localhost:3001 > /dev/null; do sleep 2; done'
-          echo "React server started on port 3001"
-        env:
-          CI: false
-          PORT: 3001
-
-      - name: Run Cucumber tests
+      - name: Run integration tests with Makefile
         env:
           RAILS_ENV: test
           REACT_APP_URL: http://localhost:3000
-        run: bundle exec cucumber --format progress
+        run: make integration-test

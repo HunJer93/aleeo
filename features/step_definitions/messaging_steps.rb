@@ -5,6 +5,18 @@ Given('I am signed in') do
   step 'the React frontend is running'
   step 'the Rails backend is running'
 
+  # Ensure we have the test user available
+  @test_user = User.find_by(username: 'test@example.com')
+  if @test_user.nil?
+    puts "Test user not found during sign in, creating..."
+    @test_user = User.create!(
+      first_name: 'Test',
+      last_name: 'User',
+      username: 'test@example.com',
+      password: 'testpassword123'
+    )
+  end
+
   visit 'http://localhost:3001'
   sign_in_user(@test_user.username, 'testpassword123')
 

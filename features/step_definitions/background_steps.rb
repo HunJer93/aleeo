@@ -36,9 +36,18 @@ Given('the React frontend is running') do
 end
 
 Given('I have an existing user account') do
-  # The test user is now created in the Before hook in helpers.rb
-  # This step just verifies it exists
+  # The test user should be created in the Before hook in helpers.rb
+  # This step just verifies it exists and assigns it to @test_user
   @test_user = User.find_by(username: 'test@example.com')
+  if @test_user.nil?
+    puts "Test user not found, creating..."
+    @test_user = User.create!(
+      first_name: 'Test',
+      last_name: 'User',
+      username: 'test@example.com',
+      password: 'testpassword123'
+    )
+  end
   expect(@test_user).to be_present
 
   # Create a test conversation for the user

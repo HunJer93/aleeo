@@ -32,14 +32,16 @@ Before do
     User.where(username: [ 'test@example.com', 'newuser@example.com' ]).destroy_all
 
     # Create a test user for sign-in scenarios
-    User.create!(
+    @test_user = User.create!(
       first_name: 'Test',
       last_name: 'User',
       username: 'test@example.com',
       password: 'testpassword123'
     )
+    puts "Created test user: #{@test_user.username}" if ENV['CI']
   rescue => e
     puts "Note: Could not setup test users: #{e.message}"
+    puts "Backtrace: #{e.backtrace.first(3)}" if ENV['CI']
   end
 end
 
@@ -77,6 +79,15 @@ module TestHelpers
       puts "Page body contains: #{page.body[0..500] rescue 'Unable to get body'}"
       raise e
     end
+
+    # Verify user exists in database before attempting sign in
+    user = User.find_by(username: email)
+    if user.nil?
+      puts "ERROR: User #{email} not found in database during sign in!"
+      puts "Available users: #{User.pluck(:username)}"
+      raise "Test user #{email} does not exist in database"
+    end
+    puts "Signing in user: #{email} (User ID: #{user.id})" if ENV['CI']
 
     # Fill in sign in form using placeholders (not labels)
     find('input[placeholder="Username"]').set(email)
@@ -118,6 +129,7 @@ module TestHelpers
     rescue RSpec::Expectations::ExpectationNotMetError => e
       puts "Login failed or conversations not found. Current URL: #{page.current_url}"
       puts "Page body contains: #{page.body[0..500] rescue 'Unable to get body'}"
+      puts "Expected to find 'Conversations' but page contains: #{page.text[0..200] rescue 'Unable to get text'}"
       raise e
     end
 

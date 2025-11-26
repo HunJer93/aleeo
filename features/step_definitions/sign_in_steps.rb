@@ -1,6 +1,18 @@
 # Step definitions for user sign in feature
 
 When('I sign in with valid credentials') do
+  # Ensure we have the test user available
+  @test_user = User.find_by(username: 'test@example.com')
+  if @test_user.nil?
+    puts "Test user not found during sign in with credentials, creating..."
+    @test_user = User.create!(
+      first_name: 'Test',
+      last_name: 'User',
+      username: 'test@example.com',
+      password: 'testpassword123'
+    )
+  end
+
   sign_in_user(@test_user.username, 'testpassword123')
 end
 
