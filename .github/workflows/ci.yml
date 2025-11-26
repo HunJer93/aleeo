@@ -89,9 +89,10 @@ jobs:
           RAILS_ENV: test
         run: bin/rails db:create db:migrate
 
-      - name: Run RSpec tests
+      - name: Run RSpec tests with coverage
         env:
           RAILS_ENV: test
+          CI: true
         run: bundle exec rspec --format RspecJunitFormatter --out tmp/rspec_results.xml --format progress
 
       - name: Upload test results
@@ -100,6 +101,14 @@ jobs:
         with:
           name: rspec-results
           path: tmp/rspec_results.xml
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov/aleeo.lcov
+          flags: backend
+          name: backend-coverage
+        continue-on-error: true
 
   test_integration:
     runs-on: ubuntu-latest
@@ -137,9 +146,11 @@ jobs:
           RAILS_ENV: test
         run: bin/rails db:create db:migrate
 
-      - name: Run Cucumber tests
+      - name: Run Cucumber tests with coverage
         env:
           RAILS_ENV: test
+          COVERAGE: true
+          CI: true
         run: bundle exec cucumber --format junit --out tmp/cucumber_results.xml --format progress
 
       - name: Upload test results
@@ -148,3 +159,11 @@ jobs:
         with:
           name: cucumber-results
           path: tmp/cucumber_results.xml
+
+      - name: Upload integration coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov/aleeo.lcov
+          flags: integration
+          name: integration-coverage
+        continue-on-error: true

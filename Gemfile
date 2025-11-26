@@ -61,6 +61,8 @@ group :test do
   gem "capybara", "~> 3.39"
   gem "rspec-expectations", "~> 3.12"
   gem "rspec_junit_formatter", "~> 0.6.0"
+  gem "simplecov", "~> 0.22.0", require: false
+  gem "simplecov-lcov", "~> 0.8.0", require: false
 end
 
 gem "bcrypt", "~> 3.1"

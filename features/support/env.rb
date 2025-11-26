@@ -4,6 +4,9 @@
 # instead of editing this one. Cucumber will automatically load all features/**/*.rb
 # files.
 
+# Start SimpleCov for cucumber tests
+require 'simplecov'
+SimpleCov.start 'rails' if ENV['COVERAGE']
 
 require 'cucumber/rails'
 require 'capybara/cucumber'
