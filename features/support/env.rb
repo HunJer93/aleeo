@@ -32,8 +32,9 @@ Capybara.configure do |config|
   config.default_driver = :selenium_chrome_headless
   config.javascript_driver = :selenium_chrome_headless
   config.app_host = 'http://localhost:3001'  # React frontend
-  config.default_max_wait_time = 15
+  config.default_max_wait_time = 20  # Increased for CI environments
   config.server = :puma, { Silent: true }
+  config.automatic_reload = false  # Disable for CI stability
 end
 
 # Configure Chrome options for headless testing with Selenium 4.8+

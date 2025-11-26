@@ -68,8 +68,15 @@ module TestHelpers
   def sign_in_user(email, password)
     visit 'http://localhost:3001'
 
-    # Wait for the page to load
-    expect(page).to have_button('Sign in', wait: 10)
+    # Wait for the page to load with better error handling
+    begin
+      expect(page).to have_button('Sign in', wait: 15)
+    rescue RSpec::Expectations::ExpectationNotMetError => e
+      puts "Sign in page failed to load. Current URL: #{page.current_url}"
+      puts "Page title: #{page.title rescue 'Unable to get title'}"
+      puts "Page body contains: #{page.body[0..500] rescue 'Unable to get body'}"
+      raise e
+    end
 
     # Fill in sign in form using placeholders (not labels)
     find('input[placeholder="Username"]').set(email)
@@ -106,7 +113,14 @@ module TestHelpers
     end
 
     # Wait for successful login and redirect to chat interface
-    expect(page).to have_content('Conversations', wait: 15)
+    begin
+      expect(page).to have_content('Conversations', wait: 20)
+    rescue RSpec::Expectations::ExpectationNotMetError => e
+      puts "Login failed or conversations not found. Current URL: #{page.current_url}"
+      puts "Page body contains: #{page.body[0..500] rescue 'Unable to get body'}"
+      raise e
+    end
+
     true # Indicate success
   end
 

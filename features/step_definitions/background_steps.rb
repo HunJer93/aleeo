@@ -5,10 +5,14 @@ Given('the Rails backend is running') do
   begin
     require 'net/http'
     uri = URI('http://localhost:3000/api/v1/users')
-    _response = Net::HTTP.get_response(uri)
-    puts "Rails backend is already running"
-  rescue => _e
-    # Start Rails server in test mode if not running
+    response = Net::HTTP.get_response(uri)
+    puts "Rails backend is running (status: #{response.code})"
+  rescue => e
+    puts "Rails backend connection failed: #{e.message}"
+    # In CI, the server should already be started, so this is an error
+    raise "Rails backend is not accessible at http://localhost:3000" if ENV['CI']
+
+    # Start Rails server in test mode if not running (local development only)
     puts "Starting Rails server in test mode..."
     system("cd /home/jhunton22/github/aleeo && RAILS_ENV=test rails server -p 3000 -d")
     sleep 5 # Give server time to start
@@ -20,12 +24,14 @@ Given('the React frontend is running') do
   begin
     require 'net/http'
     uri = URI('http://localhost:3001')
-    _response = Net::HTTP.get_response(uri)
-    puts "React frontend is already running"
-  rescue => _e
-    puts "Note: React frontend should be running on port 3001"
-    # In practice, the React dev server should be started separately
-    # as it takes time to compile and we don't want to wait for it in each test
+    response = Net::HTTP.get_response(uri)
+    puts "React frontend is running (status: #{response.code})"
+  rescue => e
+    puts "React frontend connection failed: #{e.message}"
+    # In CI, the server should already be started, so this is an error
+    raise "React frontend is not accessible at http://localhost:3001" if ENV['CI']
+
+    puts "Note: React frontend should be running on port 3001 for integration tests"
   end
 end
 

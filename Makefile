@@ -16,6 +16,18 @@ jest:
 e2e-test:
 	./bin/e2e_test
 
+# Integration test server management
+start-test-servers:
+	./bin/start_test_servers
+
+stop-test-servers:
+	./bin/stop_test_servers
+
+# Run integration tests with proper server setup
+integration-test: stop-test-servers start-test-servers
+	bundle exec cucumber features/
+	./bin/stop_test_servers
+
 # Run commands
 run-backend:
 	rails s

@@ -1,6 +1,10 @@
 # Step definitions for AI messaging feature
 
 Given('I am signed in') do
+  # Verify servers are running before attempting to visit
+  step 'the React frontend is running'
+  step 'the Rails backend is running'
+
   visit 'http://localhost:3001'
   sign_in_user(@test_user.username, 'testpassword123')
 

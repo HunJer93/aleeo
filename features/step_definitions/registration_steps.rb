@@ -20,6 +20,10 @@ Given('I create a new account via API') do
 end
 
 When('I sign in with my new credentials') do
+  # Verify servers are running before attempting to visit
+  step 'the React frontend is running'
+  step 'the Rails backend is running'
+
   visit 'http://localhost:3001'
 
   # Wait for the page to load

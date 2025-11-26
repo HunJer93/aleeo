@@ -148,11 +148,38 @@ jobs:
           RAILS_ENV: test
         run: bin/rails db:create db:migrate
 
+      - name: Start Rails backend server
+        env:
+          RAILS_ENV: test
+        run: |
+          bundle exec rails server -p 3000 -d
+          sleep 5
+          echo "Rails server started on port 3000"
+
+      - name: Start React frontend server
+        working-directory: ./aleeo
+        run: |
+          npm start &
+          # Wait for React server to be ready with timeout
+          echo "Waiting for React server to start..."
+          timeout 120 bash -c 'until curl -s http://localhost:3001 > /dev/null; do echo -n "."; sleep 3; done'
+          echo ""
+          echo "React server started on port 3001"
+        env:
+          CI: false
+          PORT: 3001
+
+      - name: Verify servers are running
+        run: |
+          curl -f http://localhost:3000/api/v1/users || echo "Rails server check failed"
+          curl -f http://localhost:3001 || echo "React server check failed"
+
       - name: Run Cucumber tests with coverage
         env:
           RAILS_ENV: test
           COVERAGE: true
           CI: true
+          REACT_APP_URL: http://localhost:3000
         run: bundle exec cucumber --format junit --out tmp/cucumber_results.xml --format progress
 
       - name: Upload test results
