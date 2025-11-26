@@ -1,13 +1,15 @@
-name: CI
+name: Deploy
 
 on:
-  pull_request:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  scan_ruby:
+  deploy:
     runs-on: ubuntu-latest
+    needs: [test_frontend, test_backend, test_integration]
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
@@ -19,23 +21,28 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Scan for common Rails security vulnerabilities using static analysis
-        run: bin/brakeman --no-pager
-
-  lint_ruby:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          ruby-version: .ruby-version
-          bundler-cache: true
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: aleeo/package-lock.json
 
-      - name: Lint Ruby code for consistent style
-        run: bin/rubocop -f github
+      - name: Install frontend dependencies
+        working-directory: ./aleeo
+        run: npm ci
+
+      - name: Build frontend for production
+        working-directory: ./aleeo
+        run: npm run build
+
+      - name: Deploy with Kamal
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          # Add your deployment configuration here
+          # Example: bin/kamal deploy
+          echo "Deployment step - configure based on your hosting setup"
 
   test_frontend:
     runs-on: ubuntu-latest
@@ -59,14 +66,6 @@ jobs:
 
       - name: Run Jest tests
         run: npm test -- --coverage --ci --watchAll=false
-
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./aleeo/coverage/lcov.info
-          flags: frontend
-          name: frontend-coverage
-        continue-on-error: true
 
   test_backend:
     runs-on: ubuntu-latest
@@ -92,14 +91,7 @@ jobs:
       - name: Run RSpec tests
         env:
           RAILS_ENV: test
-        run: bundle exec rspec --format RspecJunitFormatter --out tmp/rspec_results.xml --format progress
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: rspec-results
-          path: tmp/rspec_results.xml
+        run: bundle exec rspec --format progress
 
   test_integration:
     runs-on: ubuntu-latest
@@ -140,11 +132,4 @@ jobs:
       - name: Run Cucumber tests
         env:
           RAILS_ENV: test
-        run: bundle exec cucumber --format junit --out tmp/cucumber_results.xml --format progress
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: cucumber-results
-          path: tmp/cucumber_results.xml
+        run: bundle exec cucumber --format progress

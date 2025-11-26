@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Test runner script for local development
+# This script runs all test suites in the correct order
+
+set -e
+
+echo "🚀 Running complete test suite..."
+
+echo ""
+echo "📋 Step 1: Running RSpec (Backend) tests..."
+echo "================================================="
+RAILS_ENV=test bundle exec rspec --format progress
+
+echo ""
+echo "🎭 Step 2: Running Cucumber (Integration) tests..."
+echo "=================================================="
+RAILS_ENV=test bundle exec cucumber --format progress
+
+echo ""
+echo "⚛️  Step 3: Running Jest (Frontend) tests..."
+echo "============================================="
+cd aleeo
+npm test -- --coverage --ci --watchAll=false
+cd ..
+
+echo ""
+echo "✅ All tests passed! 🎉"
+echo ""
+echo "📊 Coverage reports:"
+echo "  - Backend: coverage/index.html"
+echo "  - Frontend: aleeo/coverage/lcov-report/index.html"

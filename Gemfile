@@ -60,6 +60,7 @@ group :test do
   gem "selenium-webdriver", "~> 4.15"
   gem "capybara", "~> 3.39"
   gem "rspec-expectations", "~> 3.12"
+  gem "rspec_junit_formatter", "~> 0.6.0"
 end
 
 gem "bcrypt", "~> 3.1"
