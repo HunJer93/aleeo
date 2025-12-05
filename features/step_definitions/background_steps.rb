@@ -14,7 +14,7 @@ Given('the Rails backend is running') do
 
     # Start Rails server in test mode if not running (local development only)
     puts "Starting Rails server in test mode..."
-    system("cd /home/jhunton22/github/aleeo && RAILS_ENV=test rails server -p 3000 -d")
+    system("cd #{Rails.root} && RAILS_ENV=test rails server -p 3000 -d")
     sleep 5 # Give server time to start
   end
 end
