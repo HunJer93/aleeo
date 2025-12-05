@@ -1,6 +1,10 @@
 setup:
+	make setup-frontend
 	bundle install
 	rails db:create db:migrate db:seed
+
+setup-frontend:
+	cd client && npm install
 
 # Test commands
 
