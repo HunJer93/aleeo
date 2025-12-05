@@ -45,8 +45,7 @@ class OpenaiClient
   BASE_URL = "https://api.openai.com/v1".freeze
 
   def initialize
-    ENV["OPENAI_API_KEY"] ||= Rails.application.credentials.dig(:openai, :api_key)
-    @api_key = ENV["OPENAI_API_KEY"]
+    @api_key = ENV["OPENAI_API_KEY"] || Rails.application.credentials.dig(:openai, :api_key)
   end
 
 
