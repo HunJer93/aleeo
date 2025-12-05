@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Script to stop test servers started by start_test_servers
+
+echo "🛑 Stopping integration test servers..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+# Kill Rails server on port 3000
+if lsof -i :3000 > /dev/null 2>&1; then
+    echo "Stopping Rails server (port 3000)..."
+    lsof -ti :3000 | xargs -r kill -9 || true
+    echo -e "${GREEN}✓ Rails server stopped${NC}"
+else
+    echo "No Rails server running on port 3000"
+fi
+
+# Kill React server on port 3001
+if lsof -i :3001 > /dev/null 2>&1; then
+    echo "Stopping React server (port 3001)..."
+    lsof -ti :3001 | xargs -r kill -9 || true
+    echo -e "${GREEN}✓ React server stopped${NC}"
+else
+    echo "No React server running on port 3001"
+fi
+
+# Kill any remaining Node.js processes that might be related to our servers
+pkill -f "react-scripts start" 2>/dev/null || true
+pkill -f "rails server" 2>/dev/null || true
+
+echo -e "${GREEN}🎉 All test servers stopped${NC}"

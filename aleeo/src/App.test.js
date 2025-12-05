@@ -1,8 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+// Mock UserLogin component since it has complex dependencies
+jest.mock('./components/UserLogin', () => {
+  return function MockUserLogin() {
+    return <div data-testid="user-login">User Login Component</div>;
+  };
+});
+
+test('renders app with user login component', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const userLoginElement = screen.getByTestId('user-login');
+  expect(userLoginElement).toBeInTheDocument();
+  expect(userLoginElement).toHaveTextContent('User Login Component');
 });

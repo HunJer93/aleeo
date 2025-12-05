@@ -15,10 +15,19 @@ class Api::V1::UsersController < ApplicationController
 
   # POST /users
   def create
-    @user = User.new(user_params)
+    # Validate password confirmation
+    if user_params[:password] != user_params[:confirm_password]
+      render json: { error: "Password and confirm password do not match" }, status: :unprocessable_content
+      return
+    end
+
+    # Remove confirm_password from params before creating user
+    user_creation_params = user_params.except(:confirm_password)
+    @user = User.new(user_creation_params)
 
     if @user.save
-      render json: @user, status: :created, location: @user
+      session[:user_id] = @user.id
+      render json: UserSerializer.new(@user).serializable_hash[:data][:attributes], status: :created
     else
       render json: @user.errors, status: :unprocessable_content
     end
@@ -46,6 +55,6 @@ class Api::V1::UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.expect(user: [ :first_name, :last_name, :username, :password_digest, :recovery_password_digest ])
+      params.require(:user).permit(:first_name, :last_name, :username, :password, :confirm_password)
     end
 end

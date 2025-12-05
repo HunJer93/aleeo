@@ -43,12 +43,33 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
+  gem "brakeman", "~> 7.1.1", require: false
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # RSpec testing framework
+  gem "rspec-rails", "~> 6.0"
+  gem "factory_bot_rails", "~> 6.2"
+  gem "shoulda-matchers", "~> 6.0"
+end
+
+group :test do
+  gem "database_cleaner-active_record", "~> 2.0"
+  gem "cucumber-rails", "~> 3.0", require: false
+  gem "selenium-webdriver", "~> 4.15"
+  gem "capybara", "~> 3.39"
+  gem "rspec-expectations", "~> 3.12"
+  gem "rspec_junit_formatter", "~> 0.6.0"
+  gem "simplecov", "~> 0.22.0", require: false
+  gem "simplecov-lcov", "~> 0.8.0", require: false
 end
 
 gem "bcrypt", "~> 3.1"
 
 gem "pry", "~> 0.15.0"
+
+gem "fast_jsonapi", "~> 1.5"
+gem "active_model_serializers", "~> 0.10.0"
+
+gem "httparty", "~> 0.22.0"

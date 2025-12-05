@@ -22,7 +22,7 @@ jobs:
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
 
-  lint:
+  lint_ruby:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -34,18 +34,45 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Lint code for consistent style
+      - name: Lint Ruby code for consistent style
         run: bin/rubocop -f github
 
-  test:
+  test_frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./aleeo
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: aleeo/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Jest tests
+        run: npm test -- --coverage --ci --watchAll=false
+        # NOTE: Chakra UI v3 + Ark UI dependency issues have been resolved
+        # See aleeo/JEST_TESTING_STATUS.md for details on the fixes implemented
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./aleeo/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+        continue-on-error: true
+
+  test_backend:
     runs-on: ubuntu-latest
 
-    # services:
-    #  redis:
-    #    image: redis
-    #    ports:
-    #      - 6379:6379
-    #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config
@@ -59,8 +86,95 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Run tests
+      - name: Set up database
         env:
           RAILS_ENV: test
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test
+        run: bin/rails db:create db:migrate
+
+      - name: Run RSpec tests with coverage
+        env:
+          RAILS_ENV: test
+          CI: true
+        run: bundle exec rspec --format RspecJunitFormatter --out tmp/rspec_results.xml --format progress
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rspec-results
+          path: tmp/rspec_results.xml
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov/aleeo.lcov
+          flags: backend
+          name: backend-coverage
+        continue-on-error: true
+
+  test_integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: aleeo/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: ./aleeo
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ./aleeo
+        run: npm run build
+
+      - name: Set up database
+        env:
+          RAILS_ENV: test
+        run: bin/rails db:create db:migrate
+
+      - name: Run integration tests with Makefile
+        env:
+          RAILS_ENV: test
+          COVERAGE: true
+          CI: true
+          REACT_APP_URL: http://localhost:3000
+        run: make integration-test
+
+      - name: Generate test results for upload
+        if: always()
+        env:
+          RAILS_ENV: test
+        run: |
+          mkdir -p tmp
+          bundle exec cucumber --format junit --out tmp/cucumber_results.xml --format progress || true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cucumber-results
+          path: tmp/cucumber_results.xml
+
+      - name: Upload integration coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov/aleeo.lcov
+          flags: integration
+          name: integration-coverage
+        continue-on-error: true
