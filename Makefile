@@ -11,7 +11,7 @@ cucumber:
 	bundle exec cucumber features/
 
 jest:
-	cd aleeo && npm test -- --watchAll=false --ci
+	cd client && npm test -- --watchAll=false --ci
 
 e2e-test:
 	./bin/e2e_test
@@ -43,4 +43,4 @@ run-backend:
 	rails s
 
 run-frontend:
-	cd aleeo && npm run start
+	cd client && npm run start
